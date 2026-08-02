@@ -1,0 +1,22 @@
+.usergreetcard{
+    width: 30rem;
+    height: 10rem;
+    display: flex;
+    justify-content: center;
+    align-items:  center;
+    background-color: lightgray; 
+    color: black;
+    margin-top: 20px;  
+    margin-left: 100px ;
+    gap: 10px;
+}
+
+.text {
+    font-size: large;
+    font-family: 'Times New Roman', Times, serif;
+}
+.text_wrong_user{
+    color: lightcoral;
+    font-size: 25px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
