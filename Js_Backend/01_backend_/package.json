@@ -1,0 +1,22 @@
+{
+  "name": "backend01",
+  "version": "1.0.0",
+  "description": "this is first backend app for practice full backend ",
+  "keywords": [
+    "node",
+    "express",
+    "backend"
+  ],
+  "license": "ISC",
+  "author": "coderx",
+  "type": "commonjs",
+  "main": "Server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node Server.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
