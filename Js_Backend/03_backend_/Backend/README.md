@@ -168,3 +168,246 @@ export const SubTodo = mongoose.model('SubTodo', Sub_Todo_Schema);
 
 ---
 ***
+
+# *Ecommerce & hospital mangement Data models*
+
+## **Ecommerce Data models here ->**
+**More practice on modelling**
+
+- **Create Ecommerce folder in models and create files** 
+```sh
+
+❯ cd models/
+
+❯ mkdir Ecommerce
+
+❯ cd Ecommerce/
+
+❯ touch user.model.js && touch products.model.js && touch category.model.js && touch order.model.js
+
+```
+
+
+- NOTE -> in vs code go into setting -> snippets -> javascript.json -> create a custom code snippet for mongoose 
+**aur you can use this**
+```js 
+{
+	"mongoose default": {
+		"prefix": "mongoosemodel",
+		"body": [
+			"import mongoose from 'mongoose' ",
+			"     ",
+			"      ",
+			"const yourSchemaname$1 = new mongoose.Schema({})",
+			"     ",
+			"      ",
+			"export const yourexportname = mongoose.model('modelname',yourSchemaname$1)"
+		],
+		"description": "this is mongoose basic setup"
+	}
+
+}
+```
+
+- now after setup json just type mongoosemodel and you have code !!! 
+
+
+--- 
+--- 
+
+###  */Ecommerce/user.model.js*
+```js
+import mongoose from "mongoose";
+
+const UserSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    password : {
+         type : String,
+         required : true
+    },
+  },
+  { timestamps: true },
+);
+
+export const User = mongoose.model("User", UserSchema);
+
+```
+
+### Ecommerce/products.model.js
+
+```js
+
+import mongoose from "mongoose";
+
+const ProductSchema = new mongoose.Schema(
+  {
+    description: {
+      type: String,
+      required: true,
+    },
+    productname: {
+      type: String,
+      required: true,
+    },
+    productimage: {
+      type: String,
+    },
+    price: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
+    productstock: {
+      default: 0,
+      type: Number,
+    },
+
+    // model relation with category model
+    Category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
+
+    Owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  { timestamps: true },
+);
+
+export const Product = mongoose.model("Product", ProductSchema);
+
+```
+---
+
+### Ecommerce/Category.model.js
+```js
+
+import mongoose from "mongoose";
+
+const CategorySchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true },
+);
+
+export const Category = mongoose.model("Category", CategorySchema);
+
+```
+
+---
+
+### Ecommerce/order.model.js
+```js 
+
+import mongoose from "mongoose";
+import { Product } from "./products.model";
+
+// mini models for complex models
+
+const orderItemsSchema = new mongoose.Schema({
+  Productid: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+  },
+  quantity: {
+    type: Number,
+    required: true,
+  },
+}); // we can also create this into separate file but its also a good
+
+const OrderSchema = new mongoose.Schema(
+  {
+    orderPrice: {
+      type: Number,
+      required: true,
+    },
+    customer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    // order with mini schema
+    orderItems: {
+      type: [orderItemsSchema],
+    },
+
+    // nested model , ager mini model extra create nhi krna to ese kr skte hain
+    address: [
+      {
+        pincode: {
+          type: String,
+        },
+        receivername: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        countryname: {
+          type: String,
+          required: true,
+        },
+        state: {
+          type: String,
+          required: true,
+        },
+        phoneNumber: {
+          type: String,
+          required: true,
+        },
+        city: {
+          type: String,
+        },
+        landmark: {
+          type: String,
+        },
+        addresstype: {
+          type: String,
+          enum: ["Home", "Office", "Other"],
+          default: "Home",
+        },
+      },
+    ],
+
+    orderStatus: {
+      type: String,
+      //speacial type checking with enum ->
+      // for speacial requirements
+      enum: ["PENDING", "CANCELLED", "DELIVERED"],
+      default: "PENDING",
+    },
+  },
+  { timestamps: true },
+);
+
+export const Order = mongoose.model("Order", OrderSchema);
+
+```
+
+---
+***
+
+
+
+
+
+
+
