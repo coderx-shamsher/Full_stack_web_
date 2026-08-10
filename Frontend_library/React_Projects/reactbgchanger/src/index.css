@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+body{
+  margin: 0;
+  padding: 0;
+  background-color: rgb(255, 255, 255);
+  color: white;
+}
+
+
+#bgbtn{
+    cursor: pointer;
+    width: fit-content;
+    height: fit-content;
+    /* background-color: cornsilk; */
+    padding: 8px;
+    border-radius: 20px;
+    text-transform: capitalize;
+}
+
