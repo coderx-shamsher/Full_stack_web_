@@ -233,3 +233,227 @@ npm run dev
 ---
 
 <!-- that's is for today......  -->
+
+---
+***
+
+# Custom API Response and Error handling and other important things
+
+```sh 
+
+npm i express
+
+```
+- now we are making express server in app.js
+
+```js
+import express from 'express'
+
+const app = express() 
+
+export default app 
+```
+
+- NOTE _> jab bhi hamne async function ko use kiya hai to hame vo promise return krta hai, hamein us promise koi resolve krna hota hai let do this, hamne serverjs mein db connection ko import kiya hai to hamein jo bhi promise return hoga use handle krna hoga.. let goo -> 
+
+```js 
+ConnectDB()
+    .then(() => {
+        // connect port of app in this with app sever connection success message
+        
+        const Listen_port = process.env.Port || 4080;
+
+        app.listen(Listen_port, () => {
+            console.log(` ♾️  Server is Running at localhost:${Listen_port}`);
+        });
+    })
+    .catch((err) => {
+        console.error("\n Error : MongoDB DB connection failed !!! ‼️ ");
+    });
+
+```
+---
+- Error handling in app server ->
+```js
+
+import express from 'express'
+
+const app = express() 
+
+// error handling 
+app.on("Error",(error)=>{
+    console.log("Error : Express Connection failed with DB \n", error)
+    throw error
+})
+
+export default app 
+
+```
+- Important to checkout -> Express documentation[express documentation](https://expressjs.com/en/5x/api/)
+
+- checkout the api documentation 
+
+## Important packages -> 
+1) **cookie-parser**
+- *cookie-parser is a popular Node.js NPM middleware for Express ExpressJS Cookie-Parser. It parses the Cookie header on incoming HTTP requests and populates req.cookies with an object keyed by cookie names, enabling easy access to user session data and preferences.*
+
+### ⚙️ How to Install
+Run
+```sh 
+npm install cookie-parser 
+```
+in your project terminal.
+
+2) **CORS**
+- *The cors npm package is a Node.js middleware for Express and Connect applications used to easily enable and configure Cross-Origin Resource Sharing (CORS)*
+
+### ⚙️ Installation
+- To install the package in your project, run the following command in your terminal:
+```bash
+npm install cors
+```
+
+- we see how to use those both 
+--- 
+
+> **Setup CORS ->** 
+- 1) ham cors ko config kr rahe hain ! cors k ander object -> origin means konsa konsa frontend hamein hamare server par data send kr skta hai request kr skta hai tnki cors ka error na aye keoki hame specific addresses koi he allow krna hota hai. 
+- 2) credentials : true krna hai 
+
+```js 
+// cors config
+app.use(cors({
+    origin : process.env.CORS_ORG,
+    credentials : true
+}))
+
+```
+
+#### setup the json() with limit 
+- keoki ham ek limit mein he data accept krenge. lets setup 
+```js
+ // json() -> for accepting data json data with limit 
+ app.use(express.json({limit:"20kb"}))
+
+``` 
+- now we dont need body-parser in express to accept json data. 
+
+### URL Encoders in express setup -> 
+- setup express urlencoders 
+```js 
+app.use(express.urlencoded({extended:true, limit: "20kb"}))
+```
+
+### static public folder for servering public files 
+```js 
+// setup static file severing using express static 
+app.use(express.static('public'))
+
+```
+- make sure you have public folder, vese jaruri nhi eska name public ho but its standard practice so lets keep it..
+
+
+--- 
+--- 
+
+## making some utils 
+- wraping functions to handle async-await operations so , hamein bar bar usi try-catch koi add na krna parde har jagah code base mein
+
+**in utils make file -> Async_Handler**
+
+```js 
+// higher order functions
+
+// with try-catch
+// const AsyncHandler = (func) => {
+//     async (req, res, next) => {
+//         try {
+//             await func(req, res, next);
+//         } catch (error) {
+//             res.status(error.code || 500).json({
+//                 success: false,
+//                 message: error.message,
+//             });
+//         }
+//     };
+// };
+
+// other syntax
+const AsyncHandler = (func) => async (req, res, next) => {
+    try {
+        await func(req, res, next);
+    } catch (error) {
+        res.status(error.code || 500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+};
+
+// promise based
+
+const promise_based_async_handler = (_function_) => {
+    (req, res, next) => {
+        Promise.resolve(_function_).catch((error) => {
+            next(error);
+        });
+    };
+
+};// not using this function  
+
+
+
+export default AsyncHandler
+
+```
+---
+
+### Node js APi errors handling 
+- checkout nodejs api errors documentations 
+
+```js 
+class ApiErrors extends Error {
+    constructor(
+        statuscode,
+        message = "Something went wrong",
+        errors = [],
+        stack = ""
+    ){
+      // using super 
+      /// overwriting message
+      super(message)
+      this.statusCode = statuscode
+      this.data = null
+      this.message = message
+      this.success = false
+      this.errors = errors
+   
+      // in production based logic 
+      if(stack){
+         this.stack = stack
+      }else{
+        Error.captureStackTrace(this, this.constructor)
+      }
+    }
+}
+
+// export class 
+
+export default ApiErrors
+
+```
+
+
+### Api Response error handling
+```js 
+
+class Api_response {
+    constructor(statusCode, data,message = "Success"){
+        this.statusCode = statusCode
+        this.data = data
+        this.message = message
+        this.success = statusCode < 400
+    }
+}
+
+```
