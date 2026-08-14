@@ -99,7 +99,7 @@ touch .prettierignore
 ---
 ---
 
-# How to connect database in MERN with debugging 
+# **How to connect database in MERN with debugging**
 - first go and search mongodb atlas -> signup and setup all important thinks if need help than checkout online !! 
 
 - **How to connect database now**
@@ -237,7 +237,7 @@ npm run dev
 ---
 ***
 
-# Custom API Response and Error handling and other important things
+# **Custom API Response and Error handling and other important things**
 
 ```sh 
 
@@ -457,3 +457,247 @@ class Api_response {
 }
 
 ```
+
+---
+***
+
+# **Models (users and videos model ) hooks and jwt today** 
+- first create models in model/
+
+```sh 
+❯ touch src/models/users.model.js
+
+❯ touch src/models/vidoes.model.js
+```
+
+- checkout the models refference in easer.io 
+
+> **Users model code ->**
+```js 
+import mongoose from 'mongoose' 
+     
+      
+const UserSchema = new mongoose.Schema({
+    username :{
+        type : String,
+        required : true,
+        unique : true,
+        lowercase : true,
+        trim : true,
+        index : true  // for better sereaching in db 
+    },
+    email :{
+        type : String,
+        required : true,
+        unique : true,
+        lowercase : true,
+        trim : true,
+    
+    },
+    fullname :{
+        type : String,
+        required : true,
+        trim : true,
+    
+    },
+    avatar : {
+        type : String, // cloudinary url
+       required : true,
+       
+    },
+     coverImage : {
+        type : String, // cloudinary url
+
+    },
+    watchHistory : [
+        {
+            type :mongoose.Schema.Types.ObjectId,
+            ref : "Video",
+        }
+    ],
+    password : {
+        type : String, 
+        required : [true, "Password is Required.....!! "],
+
+    },
+    refreshTokens :{ 
+        type : String
+    },
+
+}, {timestamps:true})
+     
+      
+export const User = mongoose.model('User',UserSchema)
+```
+
+> **Video model code ->**
+
+```js 
+import mongoose from "mongoose";
+
+const VideosSchema = new mongoose.Schema(
+    {
+        videoFiles: {
+            type: String, // cloudinary url
+            required: true,
+        },
+        thumbnail: {
+            type: String,
+            required: true,
+        },
+        title: {
+            type: String,
+            required: true,
+        },
+        description: {
+            type: String,
+            required: true,
+        },
+        duration: {
+            type: String,
+            required: true,
+        },
+        views: {
+            type: Number,
+            default: 0,
+        },
+        ispublished: {
+            type: Boolean,
+            default: true,
+        },
+        videoOwner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+    },
+    { timestamps: true }
+);
+
+export const Video = mongoose.model("Video", VideosSchema);
+
+```
+
+--- 
+
+## mongoose aggregate package for mongodb complex queries 
+- its a plugin 
+```sh 
+
+npm i mongoose-aggregate-paginate-v2
+
+```
+- import in videos model and basic setup 
+```js 
+import mongooseAggregate from "mongoose-aggregate-paginate-v2";
+
+
+// adding aggregate as plugin 
+VideosSchema.plugin(mongooseAggregate) 
+
+
+```
+
+## bcrypt package for encryption 
+- we using the bcrypt , for hashing passwords 
+
+```sh 
+
+npm i bcrypt 
+
+```
+
+## jwt tokens 
+- json web token
+```sh 
+
+npm i jsonwebtoken
+
+```
+--- 
+> **import into users model**
+```js 
+import jwt  from 'jsonwebtoken'
+import brypt from 'bcrypt'
+
+
+// using pre hook method from monogoose middlewares
+// we creating middlewares 
+UserSchema.pre("save", async function (next) {
+    if(this.isModified("password")){
+        let rounds = 10
+        this.password = bcrypt.hash(this.password,rounds)
+        return next()
+    }
+
+    // nagative 
+     //if(!this.isModified("password")) return next()
+     //let rounds = 10
+    //  this.password = bcrypt.hash(this.password,rounds)
+
+
+})
+// now comparing user password with db stored encrypted string 
+// custom method for hash password comparisons 
+UserSchema.methods.ispasswordCorrect = async function (password) {
+    return await bcrypt.compare(password,this.password) 
+}
+
+```
+
+---
+
+### Setup jwt token into env
+- jwt token ek special key ki taranh hai k jiske pass hogi data usko provide hoga or kaise use krna hai let's see 
+- go into env setup 
+```
+Access_Token_Secret=
+Access_Token_Expiry=
+Refresh_Token_Secret=
+Refresh_Token_Expiry=
+
+```
+
+--- 
+
+### create methods in User model for jwt tokens 
+```js 
+
+UserSchema.methods.generateAccessToken = function () {
+    jwt.sign(
+        // this is payload just fields of schema
+        {
+            _id: this._id,
+            email: this.email,
+            username: this.username,
+            fullname: this.fullname,
+        },
+        process.env.Access_Token_Secret,
+        {
+            expiresIn: process.env.Access_Token_Expiry,
+        }
+        // expriy ham ek object mein pass krte hain
+    );
+};
+
+UserSchema.methods.generateRefreshToken = function () {
+    // refresh token mein info kam hoti hai 
+    jwt.sign(
+        // this is payload just fields of schema
+        {
+            _id: this._id,
+            email: this.email,
+        },
+        process.env.Refresh_Token_Secret,
+        {
+            expiresIn: process.env.Refresh_Token_Expiry,
+        }
+        // expriy ham ek object mein pass krte hain
+    );
+};
+
+```
+
+--- 
+---
+
