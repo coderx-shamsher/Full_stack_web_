@@ -215,3 +215,149 @@ console.log(block_var)
 // -> let,const dono he block scoped hai 
 
 ```
+
+
+---
+***
+
+# Lexical scope in js 
+- *Lexical scope in JavaScript means that variable accessibility is determined entirely by the physical location of the variable's declaration within the source code. Also known as static scope, it ensures that an inner function always has access to the variables declared in its outer (parent) environments.*
+
+- *JavaScript determines these access boundaries at compile time (when the code is parsed), meaning a function's scope is locked in when you write it, not when or where you execute it.*
+
+## How Lexical Scope Works
+*When JavaScript looks for a variable inside a function, it follows a strict upward path called the Scope Chain:*
+- It searches the current local/block scope.
+- If not found, it moves up to the outer (parent) function's scope.
+- It continues climbing sequentially until it reaches the global scope.
+- If the variable is missing there, it throws a **ReferenceError**
+
+> **Code**
+```js 
+// lexical scope in js
+
+let global = "hello! lexical"; // comment and run
+
+function testing() {
+  //    let global = "hello from testing function" // uncomment and run
+  let name = "linux";
+
+  function abc() {
+    // let global = "hello from abc function" //un comment and run
+
+    function testfn() {
+      console.log("\n calling from testfn --> \n");
+      console.log(global);
+
+      function deep() {
+        console.log();
+        console.log(name);
+      }
+      deep();
+    }
+
+    testfn();
+  }
+  abc();
+}
+
+testing();
+
+// now  jaise hamne dekha ki yeh apne local(function scope)/block scope mein current ko find krta hai in that case mera variable hai global, to ager use global mee abc function mein nhi mila! to usne uske parent function ko call kra or uske scope mein find kra milgiya to uski value print krdi nhi ho fir se uppar ki taraf us function k bhi grandparent ko call kra aur uske scope mein find kra..
+// bs yeh ese he work krta hai jis scope main hai ager usmein find krta hai nhi us parents k scopes mein... 
+
+
+```
+- *Lexical scope defines the accessibility of variables and functions depending on their location in the source code. Variables and functions have different levels of scope.*
+
+  - **Global Scope**: Variables defined outside any function or block, accessible anywhere in the program.
+  - **Local Scope**: Variables defined inside a function or block, accessible only within that specific function or block.
+  - **Nested Scope**: Inner functions have access to variables in their parent functions.
+  - **Block Scope**: Variables defined with let and const are limited to the block they are declared in, like loops or conditionals.
+
+
+---
+
+*Lexical scope (static scope) in JavaScript means: a function’s access to variables is decided by where the function is written in the source code, not by where it is called. This is fixed at “compile” time (when the engine parses your code), and it’s the foundation for scope chains and closures.* 
+   - **Rule**: Inner functions can read variables from their outer (parent) lexical environments, but outer functions cannot see inner variables.
+   - **Lexical** = “by location in source code”. The engine looks at the physical nesting of functions/blocks to decide which variables are visible
+
+---
+
+```js 
+
+const x = 1;
+
+function outer() {
+  const x = 2;
+  function inner() {
+    console.log(x); // 2, because inner is lexically inside outer
+  }
+  inner();
+}
+
+outer();
+
+```
+*function apne “parents” (outer scope) ke variables wahi se leta hai jahan usko code mein likha gaya hai, na ki jahan se usko call kiya gaya hai.*
+
+ - Aapne ek function inner ko outer function ke andar likha.
+
+ - Toh inner hamesha outer ke variables dekh sakta hai, chahe aap inner ko kahin se bhi call karo.
+
+ - Kyunki scope decide hota hai code ke location se (lexical), execution time se nahi.
+
+
+```js 
+
+const x = 1; // global
+
+function outer() {
+  const x = 2;
+
+  function inner() {
+    console.log(x); // yeh x kaunsa hai?
+  }
+
+  inner(); // call inside outer
+}
+
+outer();
+
+```
+**Yahan inner ka output 2 aata hai, kyunki:**
+   - inner function likha gaya hai outer ke andar.
+   - Isliye uska lexical scope outer ka scope hai.
+   - Jab inner x dhundta hai, toh pehle apne scope mein dekhta hai, phir outer mein, wahan x = 2 milta hai.
+
+
+## Function ko bahar se call karna
+*Ab same inner ko bahar nikal ke call karte hain:*
+```js
+const x = 1; // global
+
+function outer() {
+  const x = 2;
+
+  function inner() {
+    console.log(x);
+  }
+
+  return inner; // return kar diya
+}
+
+const savedInner = outer(); // outer execute hua, inner return hua
+savedInner(); // call global scope se
+Output phir bhi 2 aayega, kyunki:
+```
+- inner likha gaya tha outer ke andar.
+- Isliye uska lexical environment outer ka scope capture karta hai (closure).
+- Call kahin se bhi ho (savedInner() global se), variable wahi milega jo definition time par decide hua tha.
+- Agar scope “call location” se decide hota (dynamic scope), toh savedInner() global se call hone par x = 1 milna chahiye tha. Par JS aisa nahi karta; JS lexical/static scope use karta hai.
+
+
+
+---
+***
+
+
