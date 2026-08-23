@@ -52,7 +52,7 @@ SELECT * FROM users;
 
 SHOW FULL TABLES;
 
-
+## -->> Data Retrieving Queries -->> 
 ## using where 
 
 SELECT * FROM users WHERE `Gender`="Male";
@@ -80,3 +80,11 @@ SELECT * FROM users WHERE `Gender`="Female" AND `Age`=17;
 
 ## using OR 
 SELECT * FROM users WHERE Age=18 OR `Gender`="Male";
+
+## --> sorting tables ---> 
+SELECT * FROM users ORDER BY `Name` DESC ;  # z-a 
+
+SELECT * FROM users ORDER BY `Name` ASC ;  # a-z 
+
+## using AS 
+SELECT Name AS "UserName" FROM users;
