@@ -1,0 +1,26 @@
+.form_section{
+  /* width: 80vw; */
+  min-width: 80vw;
+  max-width: 90vw;
+  min-height: 40vh;
+  max-height: 50vh;
+  height: 35vh;
+  background-color: aliceblue;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+  border-bottom-left-radius: 121px;
+  border-bottom-right-radius: 121px;
+  
+
+  position: absolute;
+  left: 6rem;
+  /* justify-items: center; */
+  /* align-content: center; */
+}
+
+.error{
+  color: blueviolet;
+}
