@@ -1,0 +1,56 @@
+.formcontainer {
+  width: 40vw;
+  height: 25vh;
+  background-color: rgba(250, 235, 215, 0.342);
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 20px;
+  border-radius: 30px;
+  padding: 10px;
+}
+
+.usernameinput {
+  width: 20vw;
+  height: 4vh;
+  border-radius: 15px;
+  padding-inline-start: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 15px;
+
+  border-top-color: rgb(97, 34, 161);
+  border-bottom-color: rgb(51, 125, 125);
+  border-right-color: burlywood;
+  border-left-color: burlywood;
+}
+
+.passwordinput {
+  width: 20vw;
+ height: 4vh;
+  border-radius: 15px;
+  padding-inline-start: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 15px;
+
+  border-top-color: rgb(97, 34, 161);
+  border-bottom-color: rgb(51, 125, 125);
+  border-right-color: burlywood;
+  border-left-color: burlywood;
+}
+
+.submitbtn{
+    width: 7rem;
+    height: 3rem;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    border-radius: 20px;
+
+}
+
+.hidden{
+    display: none !important;
+}
