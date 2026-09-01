@@ -1,0 +1,18 @@
+{
+  "name": "_q1_",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "code" : "node ./dist/code.js",
+    "build" : "npx tsc --watch "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "typescript": "^7.0.2"
+  }
+}
