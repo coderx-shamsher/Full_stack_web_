@@ -67,8 +67,20 @@ authrouter.post("/signup", async (req, res) => {
             email: email,
           };
 
-          const token = jwt.sign(payload, process.env.jwt_secret, {
-            expiresIn: "1d",
+          const AccessToken = jwt.sign(payload, process.env.jwt_secret, {
+            expiresIn: "1h",
+          });
+
+          const RefreshToken = jwt.sign(payload, process.env.jwt_secret, {
+            expiresIn: "7d",
+          });
+
+          // set on res cookie
+          res.cookie("RefeshToken", RefreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
           });
 
           // after creating user response to frontend
@@ -79,7 +91,7 @@ authrouter.post("/signup", async (req, res) => {
               username,
               email,
             },
-            Token: token,
+            Token: AccessToken,
           });
         } catch (error) {
           console.log("error in env file ", error.message);
@@ -90,6 +102,62 @@ authrouter.post("/signup", async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Database insertion failed" });
   }
+});
+
+// /api/auth/refresh-token
+authrouter.get("/refresh-token", (req, res) => {
+  const RefeshToken = req.cookies.RefeshToken;
+
+  if (!RefeshToken) {
+    return res.status(401).json({
+      message: "Refresh token not found",
+    });
+  }
+
+  // verify the user detail with refresh token
+  const userverfy = jwt.verify(RefeshToken, process.env.jwt_secret);
+
+  // log the info
+  console.log(userverfy);
+
+  // creating nre access token
+  const NewAccessToken = jwt.sign(
+    {
+      id: userverfy._id,
+      email: userverfy.email,
+    },
+    process.env.jwt_secret,
+    {
+      expiresIn: "1h",
+    },
+  );
+
+  // for extra security we can also re-gen the refesh token also
+  const NewRefreshToken = jwt.sign(
+    {
+      id: userverfy._id,
+      email: userverfy.email,
+    },
+    process.env.jwt_secret,
+    {
+      expiresIn: "7d",
+    },
+  );
+
+  // seting refresh token into cookies 
+  res.cookie("RefeshToken", NewRefreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  });
+
+   res.status(200).json({
+     message : "Access Token refreshed successfull",
+     NewAccessToken
+   })
+
+
 });
 
 // /api/auth/profile
@@ -118,7 +186,6 @@ authrouter.get("/profile", async (req, res) => {
       email: userprofile[0][0].email,
     },
   });
-
 });
 
 export default authrouter;
