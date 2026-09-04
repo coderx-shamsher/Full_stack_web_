@@ -62,21 +62,56 @@ authrouter.post("/signup", async (req, res) => {
       // gen tokon using jwt
       if (process.env.jwt_secret) {
         try {
-          const payload = {
+
+          const Rfpayload = {
             _id: result[0].insertId,
             email: email,
           };
 
-          const AccessToken = jwt.sign(payload, process.env.jwt_secret, {
-            expiresIn: "1h",
-          });
-
-          const RefreshToken = jwt.sign(payload, process.env.jwt_secret, {
+          const RefreshToken = jwt.sign(Rfpayload, process.env.jwt_secret, {
             expiresIn: "7d",
           });
 
+          const RFtokenhashed = crypto
+            .createHash("sha256")
+            .update(RefreshToken)
+            .digest("hex");
+
+          // session creation
+          const session_values = {
+            id: result[0].insertId,
+            HashedRFTk: RFtokenhashed,
+            Ip: req.ip,
+            User_Agent: req.headers["user-agent"],
+          };
+
+          let insertsessionQuery = `INSERT INTO session_users(id,RefreshTkHash,Ip,User_Agent) VALUES (?,?,?,?)`;
+
+          let sessionresult = await pool.query(insertsessionQuery, [
+            session_values.id,
+            session_values.HashedRFTk,
+            session_values.Ip,
+            session_values.User_Agent,
+          ]);
+
+          console.log("\n");
+          console.log(sessionresult);
+          console.log("\n");
+
+          const Accesspayload = {
+            _id: result[0].insertId,
+            seesion_id: sessionresult[0].insertId,
+            email: email,
+          };
+
+          const AccessToken = jwt.sign(Accesspayload, process.env.jwt_secret, {
+            expiresIn: "1h",
+          });
+
+          //  const session = await pool.query()
+
           // set on res cookie
-          res.cookie("RefeshToken", RefreshToken, {
+          res.cookie("RefreshToken", RefreshToken, {
             httpOnly: true,
             secure: true,
             sameSite: "strict",
@@ -91,7 +126,7 @@ authrouter.post("/signup", async (req, res) => {
               username,
               email,
             },
-            Token: AccessToken,
+            AcessToken: AccessToken,
           });
         } catch (error) {
           console.log("error in env file ", error.message);
@@ -105,20 +140,39 @@ authrouter.post("/signup", async (req, res) => {
 });
 
 // /api/auth/refresh-token
-authrouter.get("/refresh-token", (req, res) => {
-  const RefeshToken = req.cookies.RefeshToken;
+authrouter.get("/refresh-token",async (req, res) => {
+  const RefreshToken = req.cookies.RefreshToken;
 
-  if (!RefeshToken) {
+  if (!RefreshToken) {
     return res.status(401).json({
       message: "Refresh token not found",
     });
   }
 
   // verify the user detail with refresh token
-  const userverfy = jwt.verify(RefeshToken, process.env.jwt_secret);
+  const userverfy = jwt.verify(RefreshToken, process.env.jwt_secret);
 
   // log the info
   console.log(userverfy);
+
+  // checking for revoked user in db 
+  // create refresh token hash 
+  const RefreshTokenHash = crypto.createHash("sha256").update(RefreshToken).digest("hex")
+ 
+  const sessionUser = await pool.query(` 
+        select  * from session_users 
+        where RefreshTKHash = '${RefreshTokenHash}' And Revoked = false ;
+    `)
+
+
+    // if session not found 
+    if(! sessionUser){
+      return res.status(401).json({
+         Message : "Inviled refresh token  !! "
+      })
+
+    }
+    
 
   // creating nre access token
   const NewAccessToken = jwt.sign(
@@ -144,20 +198,30 @@ authrouter.get("/refresh-token", (req, res) => {
     },
   );
 
-  // seting refresh token into cookies 
-  res.cookie("RefeshToken", NewRefreshToken, {
+ const NewRefreshTokenHash = crypto.createHash("sha256").update(NewRefreshToken).digest("hex")
+
+ // update the newrefreshtoken 
+  const update_refreshTokenhash_Query = await pool.query(`
+      update session_users 
+          set RefreshTKHash = '${NewRefreshTokenHash}'
+          where  RefreshTKHash = '${RefreshTokenHash}'
+    `)
+   
+    // console result 
+    console.log(update_refreshTokenhash_Query)
+
+  // seting refresh token into cookies
+  res.cookie("RefreshToken", NewRefreshToken, {
     httpOnly: true,
     secure: true,
     sameSite: "strict",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
-   res.status(200).json({
-     message : "Access Token refreshed successfull",
-     NewAccessToken
-   })
-
-
+  res.status(200).json({
+    message: "Access Token refreshed successfull",
+    NewAccessToken,
+  });
 });
 
 // /api/auth/profile
@@ -186,6 +250,67 @@ authrouter.get("/profile", async (req, res) => {
       email: userprofile[0][0].email,
     },
   });
+});
+
+// /api/auth/logout
+
+authrouter.get("/logout", async (req, res) => {
+  // first get the refresh token
+
+  const refToken = req.cookies.RefreshToken;
+
+  if (!refToken) {
+    return res.status(400).json({
+      message: "Refresh token not found !! ",
+    });
+  }
+  
+  // hasing the refresh token 
+  const RefreshTokenHash_for_session_logout = crypto
+    .createHash("sha256")
+    .update(refToken)
+    .digest("hex");
+ 
+
+    // query to find session user in db 
+  const sessionfind = await pool.query(
+    `select * from session_users 
+    where Revoked=false and RefreshTKHash = '${RefreshTokenHash_for_session_logout}' `,
+  );
+  
+ // console the session user detail and checking 
+  console.log("session user founded -==>>> ",sessionfind[0][0]);
+  console.log(" user_session_id => ",sessionfind[0][0].user_session_id,'\n id =>',sessionfind[0][0].id,'\n Revoked => ',sessionfind[0][0].Revoked,"\n");
+  
+  // ager session nhi milta hai to json response -> 
+  if (!sessionfind) {
+    return res.status(400).json({
+      message: "invaild refresh token",
+    });
+  }
+
+  try {
+    let logout_query = `
+          update session_users 
+          set Revoked = true
+          where user_session_id = ${sessionfind[0][0].user_session_id} and id = ${sessionfind[0][0].id} `;
+
+    let logout_query_result = await pool.query(logout_query);
+
+    console.log("logout update successfuly in sql table ");
+    console.log(logout_query_result);
+
+    // clear cookies
+    res.clearCookie("RefreshToken")
+   
+     res.status(200).json({
+      message : " User logout successful !!! "
+     })
+
+  } catch (error) {
+    console.log("error in update logout session query", error, " \n");
+    console.log("error Message", error.message);
+  }
 });
 
 export default authrouter;
