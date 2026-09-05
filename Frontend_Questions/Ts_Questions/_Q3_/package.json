@@ -1,10 +1,9 @@
 {
-  "name": "_q2_",
+  "name": "_q3_",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "code" : "nodemon -L ./dist/code.js",
     "build" : "npx tsc --watch" 
   },
