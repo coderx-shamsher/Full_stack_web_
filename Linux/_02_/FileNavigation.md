@@ -146,6 +146,8 @@ ls -lah
 
  > that's all about the file navigation commands 
 
+
+---------
 ## clear -> for clear your mess in terminal 😅
 
 ```sh 
@@ -169,6 +171,20 @@ cd ~
 
 ---------
    
+## cd ../foldername    -> back from current and jump other 
+
+
+```sh 
+pwd 
+
+cd ~ 
+
+cd ../etc/zsh/ 
+
+pwd 
+
+```
+![cd ../foldertojump](./cd%20command%20trick.jpg)
 
 <!-- ![]()
 ![]() -->
