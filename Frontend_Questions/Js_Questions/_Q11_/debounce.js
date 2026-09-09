@@ -29,7 +29,7 @@ function debounce(fn, delay) {
   return function (...args) {
     clearTimeout(timeoutId); // purana timer cancel
     timeoutId = setTimeout(() => {
-    //   fn.apply(this, args);  // original function call
+      fn.apply(this, args);  // original function call
     }, delay);
   };
 }
