@@ -1,0 +1,17 @@
+{
+  "name": "_q4_",
+  "version": "1.0.0",
+  "description": "",
+  "main": "code.js",
+  "scripts": {
+    "code" : "nodemon -L ./dist/code.js",
+    "build" : "npx tsc --watch" 
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "typescript": "^7.0.2"
+  }
+}
