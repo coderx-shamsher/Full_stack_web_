@@ -1,0 +1,58 @@
+
+.testing{
+  padding-bottom: 20px;
+  
+}
+
+
+.productcard{
+  width: 40%;
+  height: 30vh;
+   /* display: flex; */
+   background-color: rgba(108, 147, 217, 0.464);
+   backdrop-filter: blur(30px);
+   /* justify-content: center;
+   align-items: center;
+   border-radius: 40px;
+   flex-wrap: nowrap ;
+   flex-direction: column; */
+}
+
+.card h2{
+   position: absolute;
+   left: 2rem;
+   top: 2rem;
+   text-transform: capitalize;
+
+}
+.card p {
+     position: absolute;
+   left: 10rem;
+   top: 35px;
+   font-size: large;
+}
+
+.card #ordercount{
+     position: absolute;
+   left: 3rem;
+   top: 5rem;
+   letter-spacing: 2px;
+}
+
+.card #moreorderbtn{
+   position: absolute;
+   top: 5rem;
+   left: 13rem;
+   font-size: larger;
+}
+
+.butbtn{
+   position: absolute;
+   bottom: 25px;
+   right: 30px;
+}
+.butbtn button {
+  width: 80px;
+  padding: 10px;
+  border-radius: 10px;
+}
