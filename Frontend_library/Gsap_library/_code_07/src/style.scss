@@ -1,0 +1,145 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    overflow-x: hidden;
+}
+
+.Upper_Section {
+    // background-color: bisque;
+    width: 100vw;
+    height: 10vh;
+}
+
+.Main_Nav_Bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 20px;
+    padding-top: 30px;
+    // position: relative;
+}
+
+.Nav_Actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 60px;
+    list-style-type: none;
+    font-size: 20px;
+    padding-left: 20px;
+    position: absolute;
+
+}
+
+.logo {
+    font-size: 40px;
+    position: absolute;
+    left: 50px;
+}
+
+.signup {
+    position: absolute;
+    right: 50px;
+}
+
+.signup button {
+    // padding: 20px;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-right: 10px;
+    border-radius: 20px;
+}
+
+.hero_upper_section1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.herotext {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.herotext h1 {
+    position: relative;
+    top: 1rem;
+    left: 40px;
+    font-size: 70px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.herotext h2 {
+    position: relative;
+    top: 1rem;
+    left: 40px;
+    font-size: 50px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.heropara {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: large;
+    gap: 10px;
+}
+
+
+.box1 {
+    width: 7rem;
+    height: 7rem;
+    background-color: blue;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 70px;
+    top: 312px;
+}
+
+.box2 {
+    width: 7rem;
+    height: 7rem;
+    background-color: rgb(148, 141, 48);
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 80px;
+    top: 108px;
+}
+
+.button {
+    position: absolute;
+    left: 45rem;
+    top: 330px;
+}
+
+.button button {
+    background-color: rgba(31, 193, 199, 0.521);
+    backdrop-filter: blur(40px);
+    padding: 25px 40px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.hero_image_section{
+    padding-top: 140px;
+}
+
+.images .img1 img{
+    width: 50rem;
+}
