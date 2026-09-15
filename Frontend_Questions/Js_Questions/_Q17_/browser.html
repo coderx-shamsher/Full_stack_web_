@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event bubbling and capturing </title>
+</head>
+<style>
+     .main{
+         width: 20rem;
+         height: 20vh;
+         background-color: antiquewhite;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+     }
+     .parent {
+        background-color: aquamarine;
+          width: 10rem;
+         height: 10vh;
+          display: flex;
+         justify-content: center;
+         align-items: center;
+     }
+</style>
+<body>
+     <div class="main">
+         <div class="parent" id="parentid">
+              <button class="chlidbtn" id="child">click me</button>
+     </div>
+     </div>
+</body>
+<script src="./browser.js"></script>
+</html>
+
