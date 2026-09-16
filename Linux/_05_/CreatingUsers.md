@@ -71,9 +71,7 @@ sudo su Testuser
 
    ```sh 
 
-     sudo useradd -m -s /bin/bash  username (test)
-
-
+     sudo useradd -m -s /bin/bash  username (test)        
 
    ```
    #### *Meaning:*
