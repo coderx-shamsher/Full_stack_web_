@@ -136,10 +136,88 @@ body {
     font-weight: 600;
 }
 
-.hero_image_section{
+.hero_uppermid_section {
     padding-top: 140px;
 }
 
-.images .img1 img{
-    width: 50rem;
+#card1 {
+    background-color: rgb(255, 254, 253);
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+
+#card1 img {
+    width: 45rem;
+    height: 25rem;
+    position: absolute;
+    bottom: 90px;
+    left: 35px;
+
+    // border-radius code -> 
+    border-top-right-radius: 220px;
+    border-top-left-radius: 220px;
+    border-bottom-left-radius: 154px;
+    border-bottom-right-radius: 154px;
+}
+
+#card1 .text-box1 {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+}
+
+
+// image container 2 
+#card2 {
+    background-color: rgb(248, 248, 248);
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+
+#card2 #codingTeam {
+    width: 45rem;
+    height: 35rem;
+    position: absolute;
+    bottom: 78px;
+    left: 35px;
+
+    border-top-right-radius: 100px;
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 70px;
+    border-bottom-right-radius: 70px;
+}
+
+#card2 .text-box2 {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+}
+
+.html {
+    // width: 10rem;
+    position: relative;
+    right: -16px;
+    top: -39rem;
+    background-color: rgba(245, 253, 253, 0.37);
+    backdrop-filter: blur(10px);
+
+    
+    width: 6rem;
+    height: 6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.html img {
+    width: 4rem;
+    height: 4rem;
 }
