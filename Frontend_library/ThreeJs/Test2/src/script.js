@@ -28,23 +28,27 @@ let canvas = document.querySelector(".canvas")
 const renderer = new THREE.WebGLRenderer({canvas});
 renderer.setSize( window.innerWidth, window.innerHeight );
 
-// studio lighting 
 
+// ----->>> Studio lighting 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 4.5); // High intensity
-directionalLight.position.set(5, 10, 7);
+directionalLight.position.set(5, 10, 7); // directional light kisi diraction se a rahi hoti hai 
+scene.add(directionalLight);
 // directionalLight.castShadow = true;
 
 // Optimize shadow resolution for high intensity
 // directionalLight.shadow.mapSize.width = 2048;
 // directionalLight.shadow.mapSize.height = 2048;
-scene.add(directionalLight);
 
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); 
-scene.add(ambientLight);
+
+// all natural light around all the object sab taraf se ane vali light !! 
+// const ambientLight = new THREE.AmbientLight(0xffffff, 0.4); 
+const ambientLight = new THREE.AmbientLight(0xffffff, 2); // more bright 
+scene.add(ambientLight); // make sure to add light into sence  !! 
+
 
 const pointLight = new THREE.PointLight(0xffaa44, 6.0, 15); // Warm color, high intensity, 15-unit range
 // pointLight.position.set(-4, 3, -2);
-pointLight.position.set(0, 3, 0);
+pointLight.position.set(1, 2, 0);
 // pointLight.castShadow = true;
 scene.add(pointLight);
 
@@ -66,7 +70,7 @@ scene.add(dirLightHelper);
 
 // Point Light Helper (Displays a wireframe sphere showing the exact source point location)
 // const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.5, 0xff0000); // Size 0.5, Red color
-const pointLightHelper = new THREE.PointLightHelper(pointLight, 5); // Size 0.5, Red color
+const pointLightHelper = new THREE.PointLightHelper(pointLight, 0.5); // Size 0.5, Red color
 scene.add(pointLightHelper);
 
 
