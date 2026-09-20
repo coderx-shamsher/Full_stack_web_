@@ -3,6 +3,7 @@ import pool from "../config/db/sql.connection.js";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { resourceUsage } from "process";
 
 dotenv.config({
   path: "./.env",
@@ -62,7 +63,6 @@ authrouter.post("/signup", async (req, res) => {
       // gen tokon using jwt
       if (process.env.jwt_secret) {
         try {
-
           const Rfpayload = {
             _id: result[0].insertId,
             email: email,
@@ -140,7 +140,7 @@ authrouter.post("/signup", async (req, res) => {
 });
 
 // /api/auth/refresh-token
-authrouter.get("/refresh-token",async (req, res) => {
+authrouter.get("/refresh-token", async (req, res) => {
   const RefreshToken = req.cookies.RefreshToken;
 
   if (!RefreshToken) {
@@ -155,24 +155,24 @@ authrouter.get("/refresh-token",async (req, res) => {
   // log the info
   console.log(userverfy);
 
-  // checking for revoked user in db 
-  // create refresh token hash 
-  const RefreshTokenHash = crypto.createHash("sha256").update(RefreshToken).digest("hex")
- 
+  // checking for revoked user in db
+  // create refresh token hash
+  const RefreshTokenHash = crypto
+    .createHash("sha256")
+    .update(RefreshToken)
+    .digest("hex");
+
   const sessionUser = await pool.query(` 
         select  * from session_users 
         where RefreshTKHash = '${RefreshTokenHash}' And Revoked = false ;
-    `)
+    `);
 
-
-    // if session not found 
-    if(! sessionUser){
-      return res.status(401).json({
-         Message : "Inviled refresh token  !! "
-      })
-
-    }
-    
+  // if session not found
+  if (!sessionUser) {
+    return res.status(401).json({
+      Message: "Inviled refresh token  !! ",
+    });
+  }
 
   // creating nre access token
   const NewAccessToken = jwt.sign(
@@ -198,17 +198,20 @@ authrouter.get("/refresh-token",async (req, res) => {
     },
   );
 
- const NewRefreshTokenHash = crypto.createHash("sha256").update(NewRefreshToken).digest("hex")
+  const NewRefreshTokenHash = crypto
+    .createHash("sha256")
+    .update(NewRefreshToken)
+    .digest("hex");
 
- // update the newrefreshtoken 
+  // update the newrefreshtoken
   const update_refreshTokenhash_Query = await pool.query(`
       update session_users 
           set RefreshTKHash = '${NewRefreshTokenHash}'
           where  RefreshTKHash = '${RefreshTokenHash}'
-    `)
-   
-    // console result 
-    console.log(update_refreshTokenhash_Query)
+    `);
+
+  // console result
+  console.log(update_refreshTokenhash_Query);
 
   // seting refresh token into cookies
   res.cookie("RefreshToken", NewRefreshToken, {
@@ -226,8 +229,20 @@ authrouter.get("/refresh-token",async (req, res) => {
 
 // /api/auth/profile
 authrouter.get("/profile", async (req, res) => {
+  // get access token 0>
   const Token = req.headers.authorization?.split(" ")[1];
 
+  // console.log(Token) // checkout the token in console
+
+  // const RefreshToken = req.cookies.RefreshToken
+  // console.log(RefreshToken)
+  // if (!RefreshToken) {
+  //   return res.status(401).json({
+  //     message: "token not found",
+  //   });
+  // }
+
+  // checkout access token 0>
   if (!Token) {
     return res.status(401).json({
       message: "token not found",
@@ -235,9 +250,10 @@ authrouter.get("/profile", async (req, res) => {
   }
 
   const verifyuser = jwt.verify(Token, process.env.jwt_secret);
-  //  console.log(verifyuser)
+  console.log(verifyuser);
+
   const userprofile = await pool.query(
-    `select * from users where id = ${verifyuser._id} and email = '${verifyuser.email}'`,
+    `select * from users where id = ${verifyuser.id} and email = '${verifyuser.email}'`,
   );
 
   console.log(userprofile[0][0]);
@@ -252,6 +268,117 @@ authrouter.get("/profile", async (req, res) => {
   });
 });
 
+// /api/auth/login
+
+authrouter.post("/login", async (req, res) => {
+  let user = req.body;
+
+  console.log(user.email);
+  console.log(user.password);
+
+  try {
+    let userquery_find_user = await pool.query(`
+        select * from users 
+        where email='${user.email}'
+        `);
+    console.log(userquery_find_user[0][0]);
+
+    if (!userquery_find_user[0][0]) {
+      return res.status(400).json({
+        message: "User not found !!",
+        success: false,
+      });
+    }
+  } catch (error) {
+    console.log("Error In DB Query ! 0> \n", error, "\n");
+  }
+
+  // for login logic
+  try {
+    const hashedpassword = crypto
+      .createHash("sha256")
+      .update(user.password)
+      .digest("hex");
+
+    let verify_user = await pool.query(`
+        select * from users 
+        where email='${user.email}' and password='${hashedpassword}'
+        `);
+    
+    console.log("\n: user detail 0> ", verify_user[0][0]);
+
+    if (!verify_user) {
+      return res.status(400).json({
+        message: "User email and password is Wrong!",
+        success: false,
+      });
+    } else {
+   
+      // creating refresh token
+      const RefreshToken = jwt.sign({
+        id : verify_user[0][0].id,
+        email : verify_user[0][0].email
+      },process.env.jwt_secret,{
+        expiresIn : '7d'
+      })
+   
+
+
+      // creating refreshtoken hash 
+      
+      const RefreshTKHash = crypto.createHash("sha256").update(RefreshToken).digest("hex")
+
+      const session_query_values = {
+        userid : verify_user[0][0].id,
+        RefreshTKHash : RefreshTKHash,
+        Ip : req.ip,
+        User_Agent : req.headers["user-agent"]
+      }
+     
+      let sessionInsertQuery= `INSERT INTO session_users(id,RefreshTkHash,Ip,User_Agent) VALUES (?,?,?,?)`
+    
+      let sessionUserQueryResult = await pool.query(sessionInsertQuery,[
+        session_query_values.userid,
+        session_query_values.RefreshTKHash,
+        session_query_values.Ip,
+        session_query_values.User_Agent
+      ])
+     
+      
+     console.log(sessionUserQueryResult)
+   
+     // access token
+     const AccessToken = jwt.sign({
+        id : sessionUserQueryResult[0].insertId,
+        email : verify_user[0][0].email
+      },process.env.jwt_secret,{
+        expiresIn : '15m'
+      })
+  
+    // setup in cookie on frontent 
+    res.cookie("RefreshToken", RefreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          });
+     
+      res.status(200).json({
+        message: "Logged!!",
+        success: true,
+        user: {
+          username: verify_user[0][0].name,
+          email: verify_user[0][0].email,
+          userid: verify_user[0][0].id,
+        },
+        AccessToken : AccessToken
+      });
+    }
+  } catch (error) {
+    console.log("Errors", error)
+  }
+});
+
 // /api/auth/logout
 
 authrouter.get("/logout", async (req, res) => {
@@ -264,25 +391,32 @@ authrouter.get("/logout", async (req, res) => {
       message: "Refresh token not found !! ",
     });
   }
-  
-  // hasing the refresh token 
+
+  // hasing the refresh token
   const RefreshTokenHash_for_session_logout = crypto
     .createHash("sha256")
     .update(refToken)
     .digest("hex");
- 
 
-    // query to find session user in db 
+  // query to find session user in db
   const sessionfind = await pool.query(
     `select * from session_users 
     where Revoked=false and RefreshTKHash = '${RefreshTokenHash_for_session_logout}' `,
   );
-  
- // console the session user detail and checking 
-  console.log("session user founded -==>>> ",sessionfind[0][0]);
-  console.log(" user_session_id => ",sessionfind[0][0].user_session_id,'\n id =>',sessionfind[0][0].id,'\n Revoked => ',sessionfind[0][0].Revoked,"\n");
-  
-  // ager session nhi milta hai to json response -> 
+
+  // console the session user detail and checking
+  console.log("session user founded -==>>> ", sessionfind[0][0]);
+  console.log(
+    " user_session_id => ",
+    sessionfind[0][0].user_session_id,
+    "\n id =>",
+    sessionfind[0][0].id,
+    "\n Revoked => ",
+    sessionfind[0][0].Revoked,
+    "\n",
+  );
+
+  // ager session nhi milta hai to json response ->
   if (!sessionfind) {
     return res.status(400).json({
       message: "invaild refresh token",
@@ -301,15 +435,84 @@ authrouter.get("/logout", async (req, res) => {
     console.log(logout_query_result);
 
     // clear cookies
-    res.clearCookie("RefreshToken")
-   
-     res.status(200).json({
-      message : " User logout successful !!! "
-     })
+    res.clearCookie("RefreshToken");
 
+    res.status(200).json({
+      message: " User logout successful !!! ",
+    });
   } catch (error) {
     console.log("error in update logout session query", error, " \n");
     console.log("error Message", error.message);
+  }
+});
+
+authrouter.get("/logout-all", async (req, res) => {
+  const RefreshToken = req.cookies.RefreshToken;
+
+  // console.log(RefreshToken);  //check up console
+
+  if (!RefreshToken) {
+    return res.status(400).json({
+      message: "Refresh-Token not found ",
+    });
+  }
+
+  let userverfiy = jwt.verify(RefreshToken, process.env.jwt_secret);
+
+  // console.log(userverfiy); // checkout console
+
+  // query for db search
+  try {
+    let result = await pool.query(`
+          select * from users where id=${userverfiy.id} and email='${userverfiy.email}'  
+          `);
+    // console.log(result)
+  } catch (error) {
+    console.log("Error In Db Query 0> \n", error, "\n");
+    return res.status(400).json({
+      message: "User not Founded !!",
+      success: false,
+    });
+  }
+
+  // for session user db search 0>
+  try {
+    // creating hash of refresh token
+    let RefreshTokenHash_For_Session_Logout = crypto
+      .createHash("sha256")
+      .update(RefreshToken)
+      .digest("hex");
+
+    // database query ->
+    let userSession = await pool.query(` 
+          select * from session_users 
+          where id=${userverfiy.id} and Revoked=false and RefreshTKHash='${RefreshTokenHash_For_Session_Logout}'
+         `);
+
+    console.log(" Users Session Details ->", userSession[0][0]);
+
+    // logout all query
+    // update session users
+    let logout_all_query = await pool.query(`
+      update session_users 
+      set Revoked=true 
+       where id=${userverfiy.id} and Revoked=false and RefreshTKHash='${RefreshTokenHash_For_Session_Logout}'
+      `);
+
+    console.log(" Users Session Details ->", userSession[0][0]);
+    // console.log(logout_all_query)
+
+    return res.status(200).json({
+      message: "User logout From all Devices !!",
+      success: true,
+    });
+  } catch (error) {
+    console.log("ERROR In db query ! \n", error, "\n");
+
+    return res.status(400).json({
+      message: "User logout failed!!",
+      success: false,
+    });
   }
 });
 
