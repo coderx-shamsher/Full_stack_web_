@@ -1,9 +1,11 @@
 import { Router } from "express";
 import pool from "../config/db/sql.connection.js";
-import crypto from "crypto";
+import crypto, { verify } from "crypto";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { resourceUsage } from "process";
+import { SendEmail } from "../services/email.service.js";
+import { genOTP, htmlparser } from "../utils/otp.js";
 
 dotenv.config({
   path: "./.env",
@@ -17,11 +19,129 @@ authrouter.get("/signup", (req, res) => {
     message: "response ok and you will get detail",
   });
 
-  console.log(process.env.jwt_secret);
+  // console.log(process.env.jwt_secret);
 });
 // authrouter.get('/signup',signup)
 
 // authrouter.post('/signup',signup)
+// authrouter.post("/signup",
+// async (req, res) => {
+//   console.log(req.body);
+//   const { username, email, password, id } = req.body;
+
+//   try {
+//     // check if user if already exist
+//     let userexits = await pool.query(
+//       `select * from users where id=${id} and name = '${username}' `,
+//     );
+
+//     // console.log(userexits[0][0])
+//     if (userexits[0][0]) {
+//       res.status(409).json({
+//         message: "users is already exist !! ",
+//       });
+//     } else {
+//       // password hashing
+//       const hashedpassword = crypto
+//         .createHash("sha256")
+//         .update(password)
+//         .digest("hex");
+
+//       // checking the hashed password
+//       // console.log(hashedpassword);
+
+//       const queryinsert =
+//         "insert into users (id,name,email,password) values (?,?,?,?)";
+
+//       // replace the plan password with hashed password
+//       const values = [id, username, email, hashedpassword];
+
+//       let result = await pool.query(queryinsert, values);
+
+//       console.log("data is inserted ...");
+//       console.log(result);
+//       console.log();
+//       console.log(result[0].insertId);
+//       console.log();
+//       // gen tokon using jwt
+//       if (process.env.jwt_secret) {
+//         try {
+//           const Rfpayload = {
+//             _id: result[0].insertId,
+//             email: email,
+//           };
+
+//           const RefreshToken = jwt.sign(Rfpayload, process.env.jwt_secret, {
+//             expiresIn: "7d",
+//           });
+
+//           const RFtokenhashed = crypto
+//             .createHash("sha256")
+//             .update(RefreshToken)
+//             .digest("hex");
+
+//           // session creation
+//           const session_values = {
+//             id: result[0].insertId,
+//             HashedRFTk: RFtokenhashed,
+//             Ip: req.ip,
+//             User_Agent: req.headers["user-agent"],
+//           };
+
+//           let insertsessionQuery = `INSERT INTO session_users(id,RefreshTkHash,Ip,User_Agent) VALUES (?,?,?,?)`;
+
+//           let sessionresult = await pool.query(insertsessionQuery, [
+//             session_values.id,
+//             session_values.HashedRFTk,
+//             session_values.Ip,
+//             session_values.User_Agent,
+//           ]);
+
+//           console.log("\n");
+//           console.log(sessionresult);
+//           console.log("\n");
+
+//           const Accesspayload = {
+//             _id: result[0].insertId,
+//             seesion_id: sessionresult[0].insertId,
+//             email: email,
+//           };
+
+//           const AccessToken = jwt.sign(Accesspayload, process.env.jwt_secret, {
+//             expiresIn: "1h",
+//           });
+
+//           //  const session = await pool.query()
+
+//           // set on res cookie
+//           res.cookie("RefreshToken", RefreshToken, {
+//             httpOnly: true,
+//             secure: true,
+//             sameSite: "strict",
+//             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+//           });
+
+//           // after creating user response to frontend
+//           res.status(201).json({
+//             message: "user is registered ",
+//             success: true,
+//             userdetail: {
+//               username,
+//               email,
+//             },
+//             AcessToken: AccessToken,
+//           });
+//         } catch (error) {
+//           console.log("error in env file ", error.message);
+//         }
+//       }
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Database insertion failed" });
+//   }
+// });
+
 authrouter.post("/signup", async (req, res) => {
   console.log(req.body);
   const { username, email, password, id } = req.body;
@@ -60,73 +180,113 @@ authrouter.post("/signup", async (req, res) => {
       console.log();
       console.log(result[0].insertId);
       console.log();
+
+      // generate user otp
+      const otp = genOTP();
+      const htmlmessage = htmlparser(otp);
+
+      // otp hash
+      const otpHash = crypto.createHash("sha256").update(otp).digest("hex");
+
+      try {
+        let q = `INSERT INTO user_otps(user_email,user_id,otpHash) VALUES (?,?,?)`;
+
+        let insertvalues_otp_table = {
+          email,
+          id,
+          otpHash,
+        };
+
+        // insert data into db
+         let result_of_Q = await pool.query(q,[insertvalues_otp_table.email,insertvalues_otp_table.id,insertvalues_otp_table.otpHash])
+
+         console.log("data inserted into otp table !! ",result_of_Q)
+      } catch (error) {
+        console.log("\n", error, "\n");
+      }
+
+      // sending mail
+      await SendEmail(
+        email,
+        "OTP Verification",
+        `Your OTP code is ${otp}`,
+        htmlmessage,
+      );
+
       // gen tokon using jwt
       if (process.env.jwt_secret) {
         try {
-          const Rfpayload = {
-            _id: result[0].insertId,
-            email: email,
-          };
+          //   const Rfpayload = {
+          //     _id: result[0].insertId,
+          //     email: email,
+          //   };
 
-          const RefreshToken = jwt.sign(Rfpayload, process.env.jwt_secret, {
-            expiresIn: "7d",
-          });
+          //   const RefreshToken = jwt.sign(Rfpayload, process.env.jwt_secret, {
+          //     expiresIn: "7d",
+          //   });
 
-          const RFtokenhashed = crypto
-            .createHash("sha256")
-            .update(RefreshToken)
-            .digest("hex");
+          //   const RFtokenhashed = crypto
+          //     .createHash("sha256")
+          //     .update(RefreshToken)
+          //     .digest("hex");
 
-          // session creation
-          const session_values = {
-            id: result[0].insertId,
-            HashedRFTk: RFtokenhashed,
-            Ip: req.ip,
-            User_Agent: req.headers["user-agent"],
-          };
+          //   // session creation
+          //   const session_values = {
+          //     id: result[0].insertId,
+          //     HashedRFTk: RFtokenhashed,
+          //     Ip: req.ip,
+          //     User_Agent: req.headers["user-agent"],
+          //   };
 
-          let insertsessionQuery = `INSERT INTO session_users(id,RefreshTkHash,Ip,User_Agent) VALUES (?,?,?,?)`;
+          //   let insertsessionQuery = `INSERT INTO session_users(id,RefreshTkHash,Ip,User_Agent) VALUES (?,?,?,?)`;
 
-          let sessionresult = await pool.query(insertsessionQuery, [
-            session_values.id,
-            session_values.HashedRFTk,
-            session_values.Ip,
-            session_values.User_Agent,
-          ]);
+          //   let sessionresult = await pool.query(insertsessionQuery, [
+          //     session_values.id,
+          //     session_values.HashedRFTk,
+          //     session_values.Ip,
+          //     session_values.User_Agent,
+          //   ]);
 
-          console.log("\n");
-          console.log(sessionresult);
-          console.log("\n");
+          //   console.log("\n");
+          //   console.log(sessionresult);
+          //   console.log("\n");
 
-          const Accesspayload = {
-            _id: result[0].insertId,
-            seesion_id: sessionresult[0].insertId,
-            email: email,
-          };
+          //   const Accesspayload = {
+          //     _id: result[0].insertId,
+          //     seesion_id: sessionresult[0].insertId,
+          //     email: email,
+          //   };
 
-          const AccessToken = jwt.sign(Accesspayload, process.env.jwt_secret, {
-            expiresIn: "1h",
-          });
+          //   const AccessToken = jwt.sign(Accesspayload, process.env.jwt_secret, {
+          //     expiresIn: "1h",
+          //   });
 
           //  const session = await pool.query()
 
-          // set on res cookie
-          res.cookie("RefreshToken", RefreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          });
+          // // set on res cookie
+          // res.cookie("RefreshToken", RefreshToken, {
+          //   httpOnly: true,
+          //   secure: true,
+          //   sameSite: "strict",
+          //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          // });
 
           // after creating user response to frontend
+
+          const lookupQuery = await pool.query(` 
+          select * from users
+        `);
+
+          console.log("User Lookup -> ", lookupQuery[0][0].verifyed);
+
           res.status(201).json({
             message: "user is registered ",
             success: true,
             userdetail: {
               username,
               email,
+              verified: lookupQuery[0][0].verifyed,
             },
-            AcessToken: AccessToken,
           });
         } catch (error) {
           console.log("error in env file ", error.message);
@@ -268,6 +428,50 @@ authrouter.get("/profile", async (req, res) => {
   });
 });
 
+authrouter.get("/verifymail", async (req, res) => {
+  const userverfiy = req.body;
+ 
+  console.log(userverfiy)
+  const otpHash = crypto
+    .createHash("sha256")
+    .update(userverfiy.otp)
+    .digest("hex");
+
+  const otpverify = await pool.query(` 
+    select * from user_otps 
+    where otpHash='${otpHash}' `);
+ 
+  console.log(otpverify[0][0])  
+
+    if(!otpverify){
+      return res.status(401).json({
+        message :" invalid OTP"
+      })
+    }
+  
+    // update the verifyed 
+    const userverfiy_by_userid = await pool.query(` 
+       update users 
+       set verifyed = true
+       where email='${userverfiy.email}' 
+      `)
+    
+      console.log(userverfiy_by_userid)
+     
+      // const deleteotp =await pool.query(`
+      //   select * from user_otps 
+      //   where otpHash='${otpHash} and email='${userverfiy.email}'
+      //   `)
+      // console.log(deleteotp)
+
+    return res.status(200).json({
+      message : "email is verified successfully",success : true,
+      user : {
+         user_email : userverfiy.email
+      }
+    })
+});
+
 // /api/auth/login
 
 authrouter.post("/login", async (req, res) => {
@@ -289,6 +493,13 @@ authrouter.post("/login", async (req, res) => {
         success: false,
       });
     }
+
+    if (!userquery_find_user[0][0].verifyed) {
+      return res.status(401).json({
+        message: "email is not verified!!",
+        success: false,
+      });
+    }
   } catch (error) {
     console.log("Error In DB Query ! 0> \n", error, "\n");
   }
@@ -304,7 +515,7 @@ authrouter.post("/login", async (req, res) => {
         select * from users 
         where email='${user.email}' and password='${hashedpassword}'
         `);
-    
+
     console.log("\n: user detail 0> ", verify_user[0][0]);
 
     if (!verify_user) {
@@ -313,56 +524,63 @@ authrouter.post("/login", async (req, res) => {
         success: false,
       });
     } else {
-   
       // creating refresh token
-      const RefreshToken = jwt.sign({
-        id : verify_user[0][0].id,
-        email : verify_user[0][0].email
-      },process.env.jwt_secret,{
-        expiresIn : '7d'
-      })
-   
+      const RefreshToken = jwt.sign(
+        {
+          id: verify_user[0][0].id,
+          email: verify_user[0][0].email,
+        },
+        process.env.jwt_secret,
+        {
+          expiresIn: "7d",
+        },
+      );
 
+      // creating refreshtoken hash
 
-      // creating refreshtoken hash 
-      
-      const RefreshTKHash = crypto.createHash("sha256").update(RefreshToken).digest("hex")
+      const RefreshTKHash = crypto
+        .createHash("sha256")
+        .update(RefreshToken)
+        .digest("hex");
 
       const session_query_values = {
-        userid : verify_user[0][0].id,
-        RefreshTKHash : RefreshTKHash,
-        Ip : req.ip,
-        User_Agent : req.headers["user-agent"]
-      }
-     
-      let sessionInsertQuery= `INSERT INTO session_users(id,RefreshTkHash,Ip,User_Agent) VALUES (?,?,?,?)`
-    
-      let sessionUserQueryResult = await pool.query(sessionInsertQuery,[
+        userid: verify_user[0][0].id,
+        RefreshTKHash: RefreshTKHash,
+        Ip: req.ip,
+        User_Agent: req.headers["user-agent"],
+      };
+
+      let sessionInsertQuery = `INSERT INTO session_users(id,RefreshTkHash,Ip,User_Agent) VALUES (?,?,?,?)`;
+
+      let sessionUserQueryResult = await pool.query(sessionInsertQuery, [
         session_query_values.userid,
         session_query_values.RefreshTKHash,
         session_query_values.Ip,
-        session_query_values.User_Agent
-      ])
-     
-      
-     console.log(sessionUserQueryResult)
-   
-     // access token
-     const AccessToken = jwt.sign({
-        id : sessionUserQueryResult[0].insertId,
-        email : verify_user[0][0].email
-      },process.env.jwt_secret,{
-        expiresIn : '15m'
-      })
-  
-    // setup in cookie on frontent 
-    res.cookie("RefreshToken", RefreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          });
-     
+        session_query_values.User_Agent,
+      ]);
+
+      console.log(sessionUserQueryResult);
+
+      // access token
+      const AccessToken = jwt.sign(
+        {
+          id: sessionUserQueryResult[0].insertId,
+          email: verify_user[0][0].email,
+        },
+        process.env.jwt_secret,
+        {
+          expiresIn: "15m",
+        },
+      );
+
+      // setup in cookie on frontent
+      res.cookie("RefreshToken", RefreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      });
+
       res.status(200).json({
         message: "Logged!!",
         success: true,
@@ -371,11 +589,11 @@ authrouter.post("/login", async (req, res) => {
           email: verify_user[0][0].email,
           userid: verify_user[0][0].id,
         },
-        AccessToken : AccessToken
+        AccessToken: AccessToken,
       });
     }
   } catch (error) {
-    console.log("Errors", error)
+    console.log("Errors", error);
   }
 });
 
