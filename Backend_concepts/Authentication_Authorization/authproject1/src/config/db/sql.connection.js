@@ -1,3 +1,4 @@
+// import { lookup } from "dns";
 import mysql2 from "mysql2/promise";
 
 let pool = await mysql2.createPool({
@@ -56,9 +57,76 @@ async function session() {
   console.log(user[0])
 }
 
+async function addcolumn() {
+    // let addcolumn= pool.query(`
+    //      ALTER TABLE users
+    //      ADD verifyed BOOLEAN DEFAULT false
+    //   `)
+   
+      // console.log(addcolumn)
+
+    let lookup = await pool.query('select * from users') 
+  
+    console.log(lookup)
+    
+}
+
+
+async function opttable() {
+    try {
+        let queryopt_table = await pool.query(`
+           CREATE TABLE user_otps (
+              user_email VARCHAR(150) NOT NULL,
+              user_id INT NOT NULL, 
+              otpHash VARCHAR(500) NOT NULL,
+              otp_create_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, -- Added missing comma
+
+              -- Combined into a single, valid foreign key statement
+              CONSTRAINT fk_user_otps_user_id 
+              FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+           ); 
+        `);
+
+        console.log("Table created successfully:", queryopt_table);
+
+    } catch (error) {
+        console.error("Error creating table:", error.message);
+    }
+}
+
 connectToDb();
+
+const Queries = {
+   lookupQuery_users : async function(){
+     const lookupQuery = await pool.query(` 
+          select * from users
+        `)
+    
+        console.log(lookupQuery)
+   },
+   lookupQuery : async function(){
+     const lookupQuery = await pool.query(` 
+          select * from user_otps
+        `)
+    
+        console.log(lookupQuery)
+   },
+   Insertquery : async function() {
+       let q = `INSERT INTO user_otps(user_email,user_id,otpHash) VALUES (?,?,?)`
+
+       let values = {
+         email,
+         id,
+         otpHash
+       }
+   }
+}
+
 // show()
 // users()
-session()
+// session()
+// addcolumn()
+// opttable()
+// Queries.lookupQuery_users()
 
 export default pool;
