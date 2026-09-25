@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100%;
+  height: 100vh;
+  /* background-color:linear-gradient(to rigth,#3D4D55 1%,#A79E9C 10%,#D3C3B9 20%,#B58863 100%); */
+  /* background:linear-gradient(#fed7a5 0%,#A79E9C 0%,#B58863 50%); */
+  
+  /* background:linear-gradient(#A79E9C -1%,#B58863 40%,#9ba8ab 150%);  */
+ /* bg gradient color */
+ 
+ /* background-image: url('../public/Arch\ Linux\ Wallpaper\ 005\ Download\ -\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ___\ ___Wallpaper\ Zone.jpg'); */
+
+ /* background-image: url('../public/cyberCity1.png'); */
+ /* background-image: url('../public/cyberMountGears.png');
+
+ background-position: center;
+ background-size: cover; */
+}
+
