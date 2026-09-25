@@ -1,0 +1,36 @@
+.navbar-header{
+    width: 95%;
+    height: 10rem;
+    background-color: #8b95a83a;
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    border-radius: 100px;
+    margin-left: 34px;
+}
+
+.navlinks{
+    display: flex;
+    justify-content: space-between;
+    gap: 50px;
+    list-style-type: none;
+    padding-right: 30px; 
+}
+
+.navlinks li {
+    font-size: 21px;
+}
+
+.navbar-header .logo{
+    padding-left: 40px;
+    font-size: 30px;
+     color: #99730be0;
+     font-weight: 700;
+}
+
+.Link {
+    text-decoration: none;
+    color: burlywood;
+}
