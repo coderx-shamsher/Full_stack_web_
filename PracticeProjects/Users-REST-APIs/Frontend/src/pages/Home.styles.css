@@ -1,0 +1,51 @@
+.PageSection1 {
+  width: 100%;
+  height: 100vh;
+  background-image: url("../public/cyberMountGears.png");
+
+  background-position: center;
+  background-size: cover;
+  padding-bottom: 130px;
+}
+
+.speration {
+  width: 100%;
+  height: 100vh;
+
+  background-image:
+    linear-gradient(
+      to bottom,
+      transparent 10%,
+      rgba(136, 136, 136, 0) 20%,
+      rgba(65, 63, 63, 0) 100%
+    ),
+    url("../public/cyberMountGearsResized1.png");
+
+  backdrop-filter: blur(50px);
+  /* background-image: url('../public/cyberMountGearsResized1.png'); */
+
+  background-position: top top;
+  background-size: cover;
+}
+
+.PageSection2 {
+  width: 100%;
+  height: 100vh;
+
+  background-image:
+    linear-gradient(
+      to top,
+      transparent 30%,
+      rgba(107, 105, 105, 0.027) 20%,
+      rgba(65, 63, 63, 0) 100%
+    ),
+    url("../public/Neon Data Horizon at Dawn.png");
+
+  /* background-image: url('../public/Neon Data Horizon at Dawn.png'); */
+  backdrop-filter: blur(40px);
+  background-position: center;
+  background-size: cover;
+  margin-top: -170px;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+}
