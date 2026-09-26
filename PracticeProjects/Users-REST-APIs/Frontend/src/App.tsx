@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import GetUsers from './pages/GetUsers'
 import UpdateUsers from './pages/UpdateUsers'
 import RemoveUser from './pages/RemoveUser'
+import CreateUsers from './pages/CreateUsers'
 
 const route = createBrowserRouter([
       {
@@ -17,7 +18,7 @@ const route = createBrowserRouter([
       },
       {
         path : "/create-user",
-        element : <><GetUsers/></>
+        element : <><CreateUsers/></>
       },
       {
         path : "/update-user",
