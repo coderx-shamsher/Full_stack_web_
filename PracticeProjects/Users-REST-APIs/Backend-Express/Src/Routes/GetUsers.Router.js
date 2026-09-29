@@ -12,7 +12,7 @@ GetUsersRouter.get("/get-users", (req, res) => {
     console.log(result[0]);
     res.status(200).json({
       message: "u get alll users",
-      result : result[0]
+      result : result
     });
   });
  
