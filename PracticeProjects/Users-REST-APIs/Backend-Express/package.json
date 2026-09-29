@@ -1,0 +1,20 @@
+{
+  "name": "backend-express",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "server": "nodemon -L ./Src/Server/ServerStart.js",
+    "db" : "nodemon -L ./Src/Db/Server/db.server.connection.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "express": "^5.2.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.24.4"
+  }
+}
