@@ -1,5 +1,6 @@
 import express from "express";
 import pool from "../Db/Server/db.server.connection.js";
+import { GetOneUser } from "../Controllers/GetOneUser.query.js";
 
 const GetUsersRouter = express.Router();
 
@@ -24,4 +25,12 @@ GetUsersRouter.get("/get-users", (req, res) => {
 
 });
 
+GetUsersRouter.get('/get-user',(req,res)=>{
+    console.log(req.body)
+    
+    const {email, password} = req.body
+    
+    GetOneUser(email,password,res)
+    
+})
 export default GetUsersRouter;
