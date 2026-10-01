@@ -9,6 +9,10 @@ import app from './express.app.js'
 import dotenv from 'dotenv'
 import { CreateTableMembers } from '../../Database/Queries/create_project_members.js'
 import { MembersTableLookup } from '../../Database/Queries/members_table_lookup.js'
+import { CreateTablesTasks } from '../../Database/Queries/create_tasks_Table.js'
+import { taskTableLookup } from '../../Database/Queries/tasks_table_lookup.js'
+import { CreateCommentsTable } from '../../Database/Queries/create_comments_Tables.js'
+import { commentsTableLookup } from '../../Database/Queries/comments_table_lookup.js'
 
 dotenv.config({
     path :'.env'
@@ -32,6 +36,11 @@ RunQueries(sqlConnection)      // query for sql db connection
 // RunQueries(UserTableLookup)    /// query for lookup users table 
 // RunQueries(lookupdb)         // query for lookupdb's
 // RunQueries(Project_Table_lookup)  //query for lookup projects table
-// RunQueries(CreateTableMembers)    // query for lookup member table 
-RunQueries(MembersTableLookup)
+// RunQueries(CreateTableMembers)    // query for create members table 
+// RunQueries(MembersTableLookup)    // query for lookup members table  
 
+// RunQueries(CreateTablesTasks)    // query for create tasks table 
+// RunQueries(taskTableLookup)        // query for tasks table lookup 
+
+// RunQueries(CreateCommentsTable)   // query for create comments table 
+// RunQueries(commentsTableLookup)      // query lookup comments table
