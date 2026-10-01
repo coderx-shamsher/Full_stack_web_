@@ -25,12 +25,13 @@ const port = process.env.PORT
 
 app.listen(port,host,()=>{
     console.log(`Backend Server Running on http://${host}:${port}\n`)
+    sqlConnection() // starting the Database Server with backend server 
 })
-
 console.log()
-// - backend k sath he database start hoga... 
-// NOTE -< ek function hai jo query js functions k run krta hai 
-RunQueries(sqlConnection)      // query for sql db connection 
+
+
+// NOTE -< RunQueries ek function hai jo query js functions k run krta hai  ( temp function )
+// RunQueries(sqlConnection)      // query for sql db connection 
 // RunQueries(CreateProjectsTable) // query for creating projects table
 // RunQueries(CreateUserTable)    // query for creating users table
 // RunQueries(UserTableLookup)    /// query for lookup users table 
