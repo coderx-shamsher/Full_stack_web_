@@ -1,0 +1,35 @@
+import pool from "../Config/mysql.pool.js";
+
+export async function CreateTableMembers() {
+    try {
+        const result = await pool.query(`
+            CREATE TABLE project_members (
+                    project_id INT NOT NULL,
+
+                    user_id INT NOT NULL,
+
+                    role ENUM('owner', 'member') DEFAULT 'member',
+
+                    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+                    PRIMARY KEY (project_id, user_id),
+
+                    FOREIGN KEY (project_id)
+                        REFERENCES projects(projectId)
+                        ON DELETE CASCADE,
+
+                    FOREIGN KEY (user_id)
+                        REFERENCES users(userId)
+                        ON DELETE CASCADE
+             );
+        `);
+     
+        if(result){
+            console.log("\nTable is Created SuccessFully !\n")
+            console.log(result)
+        }
+    } catch (error) { 
+        console.log("\nError in Table creation !! \n")
+        console.log(error)
+    }
+}
