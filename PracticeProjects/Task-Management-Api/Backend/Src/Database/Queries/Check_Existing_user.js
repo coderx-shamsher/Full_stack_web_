@@ -5,8 +5,7 @@ import { CreateUserQuery } from "./CreateUserQuery.js";
 export async function LookupUser(data,res) {
     // let lookup user by email
   const { userId, email } = data;
-   
-
+    
     try {
         const [User] = await pool.query(`SELECT * FROM users WHERE userId=? AND userEmail=?`,[userId,email])
 
