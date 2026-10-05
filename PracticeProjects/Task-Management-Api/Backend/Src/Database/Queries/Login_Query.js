@@ -1,5 +1,5 @@
 import pool from "../Config/mysql.pool.js";
-import jwt from "jsonwebtoken";
+// import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import {
   generateAccessToken,
