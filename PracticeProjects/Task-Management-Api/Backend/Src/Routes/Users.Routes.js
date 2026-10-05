@@ -4,7 +4,8 @@ import { CreateUser } from '../Controllers/CreateUser.Controller.js'
 const UserRouter  =  express.Router() 
 
 UserRouter.get('/get-user',GetUsers)
-UserRouter.post('/create-user',CreateUser)
+// /api/signup
+UserRouter.post('/signup',CreateUser)
 
 
 export default  UserRouter            
