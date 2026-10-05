@@ -1,10 +1,25 @@
 import express from "express";
 import { auth_middleware } from "../Middlewares/authMiddleware.js";
-import { CreateProjectService } from "../Services/CreateProject.service.js";
 import { projecCreateController } from "../Controllers/Projects.Controller.js";
+import { getProjectsController } from "../Controllers/GetProjects.Controller.js";
+import { GetProjectsByIdController } from "../Controllers/GetProjectById.controller.js";
 
 const projectsRouter = express.Router();
 
-projectsRouter.post("/projects", auth_middleware, projecCreateController);
+projectsRouter.post(
+    "/projects", 
+    auth_middleware, 
+    projecCreateController); // create or new project by user
+
+projectsRouter.get(
+    "/projects",
+     auth_middleware, 
+    getProjectsController); // /api/project -> to get project
+
+projectsRouter.get(
+  "/projects/:projectId",
+  auth_middleware,
+  GetProjectsByIdController,
+); // /api/project/:projectid  -> to get project by id
 
 export default projectsRouter;

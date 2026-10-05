@@ -23,5 +23,5 @@ app.use('/api/admin',adminRouter)
 // project routing 
 // /api/projects
 app.use('/api',projectsRouter)
-
+app.use('/api',projectsRouter)
 export default  app             
