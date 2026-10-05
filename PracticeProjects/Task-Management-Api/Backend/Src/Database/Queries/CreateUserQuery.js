@@ -27,19 +27,18 @@ export async function CreateUserQuery(data, res) {
       res.cookie("AccessToken", AccessToken, {
         httpOnly: true,
         maxAge: 15 * 60 * 1000,
-        secure: true,
+        secure: false, // fixed 
       });
     
       res.cookie("RefreshToken", RefreshToken, {
         httpOnly: true,
-        secure: true,
+        secure:false, // fixed 
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
       res.status(201).json({
         Message: "user Was Created !! ",
-        Success: true,
-        AccessToken,
+        Success: true,  
         Details: result[1],
       });
     }
