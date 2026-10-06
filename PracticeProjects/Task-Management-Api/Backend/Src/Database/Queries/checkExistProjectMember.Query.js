@@ -16,7 +16,7 @@ export const checkExistProjectMemberQuery = async (
 
     if (existingMember.length > 0) {
       console.log("\n --------User(member) is Already Exists !!--------- \n");
-      console.log("-->> Existing Member -->>",existingMember,"\n");
+      console.log("-->> Existing Member -->>", existingMember, "\n");
       console.log("\n --------User(member) is Already Exists !!--------- \n");
       return res.status(409).json({
         Success: false,
@@ -24,6 +24,15 @@ export const checkExistProjectMemberQuery = async (
       });
     }
 
+    if (existingMember.length === 0) {
+      console.log("\n --------member Not Exists !!--------- \n");
+      console.log("-->> Member logs  -->>", existingMember, "\n");
+      console.log("\n --------Logs End !!--------- \n");
+      return res.status(404).json({
+        Success: false,
+        Message: "Project member not found",
+      });
+    }
   } catch (error) {
     console.log("\n------------ Db Error Logs ------------ \n");
     console.log("Existing Founding Member Error:", error);
