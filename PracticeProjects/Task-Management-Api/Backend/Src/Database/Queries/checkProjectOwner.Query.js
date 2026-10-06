@@ -3,7 +3,7 @@ import pool from "../Config/mysql.pool.js";
 export const checkProjectOwnerQuery = async (projectId, ownerId, res) => {
   try {
     const [result] = await pool.query(
-      `SELECT projectId
+      `SELECT projectId,ownerId
             FROM projects
             WHERE projectId = ?
             AND ownerId = ?`,
