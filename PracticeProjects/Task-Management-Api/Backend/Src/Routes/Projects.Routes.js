@@ -3,6 +3,7 @@ import { auth_middleware } from "../Middlewares/authMiddleware.js";
 import { projecCreateController } from "../Controllers/Projects.Controller.js";
 import { getProjectsController } from "../Controllers/GetProjects.Controller.js";
 import { GetProjectsByIdController } from "../Controllers/GetProjectById.controller.js";
+import { UpdateProjectController } from "../Controllers/UpdateProjects.Controller.js";
 
 const projectsRouter = express.Router();
 
@@ -21,5 +22,12 @@ projectsRouter.get(
   auth_middleware,
   GetProjectsByIdController,
 ); // /api/project/:projectid  -> to get project by id
+
+// /api/projects/:projectid
+projectsRouter.put(
+    "/projects/:projectId",
+    auth_middleware,
+    UpdateProjectController
+) // update project by projectid 
 
 export default projectsRouter;
