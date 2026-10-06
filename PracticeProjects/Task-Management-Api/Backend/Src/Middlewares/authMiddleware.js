@@ -9,7 +9,7 @@ export function auth_middleware(req, res, next) {
 
     // get access token from req cookies
     const token = req.cookies.AccessToken;
-    console.log(token); // verify access token
+    // console.log(token); // verify access token
 
     // -> if not token !token
     if (!token) {
@@ -25,7 +25,7 @@ export function auth_middleware(req, res, next) {
     const verifytoken = jwt.verify(token, process.env.jwt_Access_Token_Secret);
 
     req.User = verifytoken;
-    console.log("JWT PAYLOAD:", verifytoken);
+    console.log("\nJWT PAYLOAD:", verifytoken);
 
     // send to next
     next();
