@@ -15,7 +15,7 @@ export const GetProjectsByIdController = async (req, res) => {
 
    
      // db opertions ->>> 
-      const project = await getProjectByIdQuery(projectId);
+      const project = await getProjectByIdQuery(projectId,userId);
       if (project.length === 0) {
         return res.status(404).json({
           Success: false,
