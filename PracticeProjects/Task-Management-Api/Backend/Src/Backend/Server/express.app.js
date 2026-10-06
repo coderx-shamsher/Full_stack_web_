@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser'
 import { auth_middleware } from '../../Middlewares/authMiddleware.js'
 import adminRouter from '../../Routes/Admin.Routes.js'
 import projectsRouter from '../../Routes/Projects.Routes.js'
+import projectMembersRouter from '../../Routes/Projects_members.Routes.js'
 
 const app = express()          
 app.use(express.json())                  
@@ -23,5 +24,9 @@ app.use('/api/admin',adminRouter)
 // project routing 
 // /api/projects
 app.use('/api',projectsRouter)
-app.use('/api',projectsRouter)
+
+// /api/projects/:projectId/members
+
+app.use('/api',projectMembersRouter)
+
 export default  app             
