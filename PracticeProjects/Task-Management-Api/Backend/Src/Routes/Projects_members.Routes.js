@@ -3,6 +3,7 @@ import { auth_middleware } from "../Middlewares/authMiddleware.js";
 import { addprojectMemberController } from "../Controllers/AddprojectMember.Controller.js";
 import { getProjectMembersController } from "../Controllers/getProjectMembers.Controller.js";
 import { updateProjectMemberController } from "../Controllers/UpdateProjectMember.Controller.js";
+import { deleteProjectMemberController } from "../Controllers/deleteProjectMember.Controller.js";
 
 
 const projectMembersRouter = express.Router();
@@ -26,5 +27,13 @@ projectMembersRouter.put(
     auth_middleware,
     updateProjectMemberController
 );
+
+projectMembersRouter.delete(
+    '/projects/:projectId/members/:memberId',
+    auth_middleware,
+   deleteProjectMemberController
+);
+
+
 
 export default projectMembersRouter;
