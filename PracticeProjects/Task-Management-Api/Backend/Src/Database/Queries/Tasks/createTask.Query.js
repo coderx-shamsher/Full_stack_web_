@@ -36,22 +36,32 @@ export const createTaskQuery = async (
         dueDate,
       ],
     );
+    
+    if(result.affectedRows === 0 ){
+      console.log("\n ------ Task Creation Failed Logs ------ \n")
+      console.log("failed Query Results :",result)
+      console.log("\n ------ Task Creation Logs End ------ \n")
+      return res.status(500).json({
+        success: false,
+        message: "Internal server error | Failed In Creating Task",
+      });
+    }
+    
+    // success response 
     console.log('\n ------ DB Query (CreateTasks) Logs ---------- \n')
     console.log(result)
     console.log('\n ------ DB Query Logs End ---------- \n')
-    return res.status(201).json({
-      success: true,
-      message: "Task created successfully",
-      taskId: result.insertId,
-    });
+   
+      return res.status(201).json({
+        success: true,
+        message: "Task created successfully",
+        taskId: result.insertId,
+      });
+
 
   } catch (error) {
     console.log("\n ------- DB Error Logs --------\n")
     console.error("Create Task Error:", error);
     console.log("\n ------- DB Error Logs End --------\n")
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error | Failed In Creating Task",
-    });
   }
 };
