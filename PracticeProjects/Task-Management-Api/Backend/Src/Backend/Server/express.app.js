@@ -5,10 +5,10 @@ import UserRouter from '../../Routes/Users.Routes.js'
 import AuthRouter from '../../Routes/Auth.Routes.js'
 import getProfileRouter from '../../Routes/GetProfile.Routes.js'
 import cookieParser from 'cookie-parser'
-import { auth_middleware } from '../../Middlewares/authMiddleware.js'
 import adminRouter from '../../Routes/Admin.Routes.js'
 import projectsRouter from '../../Routes/Projects.Routes.js'
 import projectMembersRouter from '../../Routes/Projects_members.Routes.js'
+import tasksRouter from '../../Routes/Tasks.Routes.js'
 
 const app = express()          
 app.use(express.json())                  
@@ -28,5 +28,9 @@ app.use('/api',projectsRouter)
 // /api/projects/:projectId/members
 
 app.use('/api',projectMembersRouter)
+ 
+
+// /api/projects/:projectId/tasks
+app.use('/api',tasksRouter)
 
 export default  app             
