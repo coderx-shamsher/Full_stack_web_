@@ -15,9 +15,9 @@ export const checkExistProjectMemberQuery = async (
     );
 
     if (existingMember.length > 0) {
-      console.log("\n --------User(member) is Already Exists !!--------- \n");
+      console.log("\n --------Db Query Logs (member Exists OR Not ) !!--------- \n");
       console.log("-->> Existing Member -->>", existingMember, "\n");
-      console.log("\n --------User(member) is Already Exists !!--------- \n");
+      console.log("\n --------DB Query Logs End !!--------- \n");
       return res.status(409).json({
         Success: false,
         Message: "User is already a member of this project",
@@ -25,21 +25,21 @@ export const checkExistProjectMemberQuery = async (
     }
 
     if (existingMember.length === 0) {
-      console.log("\n --------member Not Exists !!--------- \n");
+      console.log("\n --------member not Exists!! \n Insert This User Into This Project--------- \n");
       console.log("-->> Member logs  -->>", existingMember, "\n");
       console.log("\n --------Logs End !!--------- \n");
-      return res.status(404).json({
-        Success: false,
-        Message: "Project member not found",
-      });
+      // return res.status(404).json({
+      //   Success: false,
+      //   Message: "Project member not found",
+      // });
     }
   } catch (error) {
     console.log("\n------------ Db Error Logs ------------ \n");
     console.log("Existing Founding Member Error:", error);
     console.log("\n------------ Db Error Logs ------------ \n");
-    return res.status(500).json({
-      Success: false,
-      Message: "Error In Founded Existing Member",
-    });
+    // return res.status(500).json({
+    //   Success: false,
+    //   Message: "Error In Founded Existing Member",
+    // });
   }
 };
