@@ -8,7 +8,7 @@ export const getProjectsQuery = async (userId) => {
 
   if(result.length > 0){ 
     
-    console.log("\n --------- Db query --> \n");
+    console.log("\n ---------GetProject Db query --> \n");
     console.log(result);
     console.log("\n --------- Db query end --> \n");
     
