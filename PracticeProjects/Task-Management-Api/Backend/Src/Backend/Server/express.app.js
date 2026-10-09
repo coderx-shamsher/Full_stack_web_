@@ -9,6 +9,7 @@ import adminRouter from '../../Routes/Admin.Routes.js'
 import projectsRouter from '../../Routes/Projects.Routes.js'
 import projectMembersRouter from '../../Routes/Projects_members.Routes.js'
 import tasksRouter from '../../Routes/Tasks.Routes.js'
+import commentsRouter from '../../Routes/Comments.Routes.js'
 
 const app = express()          
 app.use(express.json())                  
@@ -32,5 +33,9 @@ app.use('/api',projectMembersRouter)
 
 // /api/projects/:projectId/tasks
 app.use('/api',tasksRouter)
+
+// /api/projects/:projectId/comments
+app.use("/api",commentsRouter)
+
 
 export default  app             
