@@ -13,6 +13,7 @@ import { CreateTablesTasks } from '../../Database/Queries/create_tasks_Table.js'
 import { taskTableLookup } from '../../Database/Queries/tasks_table_lookup.js'
 import { CreateCommentsTable } from '../../Database/Queries/create_comments_Tables.js'
 import { commentsTableLookup } from '../../Database/Queries/comments_table_lookup.js'
+import { createProjectComments } from '../../Database/Queries/createTableProjectComments.Query.js'
 
 dotenv.config({
     path :'.env'
@@ -45,3 +46,5 @@ console.log()
 
 // RunQueries(CreateCommentsTable)   // query for create comments table 
 // RunQueries(commentsTableLookup)      // query lookup comments table
+
+// RunQueries(createProjectComments)   // create new table project comments 
