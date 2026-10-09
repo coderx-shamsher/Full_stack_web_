@@ -14,7 +14,7 @@ export const InsertProjectCommentController = (req, res) => {
   console.log();
 
   // validate  ->>
-  if (typeof projectId !== "number" && projectId < 0) {
+  if (typeof projectId !== "number" || projectId <= 0) {
     return res.status(404).json({
       Success: false,
       Message: "Invaild projectId !! try again...",
