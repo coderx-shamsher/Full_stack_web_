@@ -2,7 +2,7 @@ import pool from "../../Config/mysql.pool.js";
 
 export async function InsertProjectCommentQuery(projectId, userId, comment, res) {
   try {
-    const [createdComment] = await pool.execute(
+    const [createdComment] = await pool.query(
       `INSERT INTO project_comments
             (project_id, user_id, comment)
             VALUES (?, ?, ?)`,
