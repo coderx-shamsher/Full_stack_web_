@@ -1,7 +1,7 @@
-import { checkprojectCommentExists } from "../../Database/Queries/comments/checkprojectCommentExists.Query";
-import { updateprojectCommentQuery } from "../../Database/Queries/comments/updateProjectComment.Query";
-import { checkProjectOwnerMemberQuery } from "../../Database/Queries/Tasks/checkProject_member_OR_owner.Query";
-import { checkProjectExistsQuery } from "../../Database/Queries/Tasks/checProjectExistsById.Query";
+import { checkProjectCommentExistsQuery } from "../../Database/Queries/comments/ProjectCommentExistsQuery.js";
+import { updateprojectCommentQuery } from "../../Database/Queries/comments/updateProjectComment.Query.js";
+import { checkProjectOwnerMemberQuery } from "../../Database/Queries/Tasks/checkProject_member_OR_owner.Query.js";
+import { checkProjectExistsQuery } from "../../Database/Queries/Tasks/checProjectExistsById.Query.js";
 
 export const updateprojectCommentController = async (req, res) => {
   const projectId = Number(req.params.projectId);
@@ -51,8 +51,7 @@ export const updateprojectCommentController = async (req, res) => {
   checkProjectExistsQuery(projectId, userId, res);
   
   // check for comment exists
-  checkprojectCommentExists(commentId, projectId, res);
-  
+  checkProjectCommentExistsQuery(commentId, projectId, res)
 
   // update comment query ->
   updateprojectCommentQuery(commentId, projectId, comment, res);
