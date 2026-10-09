@@ -3,6 +3,7 @@ import { auth_middleware } from "../Middlewares/authMiddleware.js";
 import { createTaskController } from "../Controllers/TasksControllers/createTasks.Controller.js";
 import { getAllProjectTasksController } from "../Controllers/TasksControllers/getProjectTasks.Controller.js";
 import { getTasksByIdController } from "../Controllers/TasksControllers/getTaskById.Controller.js";
+import { updateTaskController } from "../Controllers/TasksControllers/updateTask.controller.js";
 
 
 const tasksRouter = express.Router();
@@ -24,5 +25,12 @@ tasksRouter.get(
   auth_middleware,
   getTasksByIdController
 );
+
+tasksRouter.put(
+  "/projects/:projectId/tasks/:taskId",
+  auth_middleware, 
+  updateTaskController
+);
+
 
 export default tasksRouter;
