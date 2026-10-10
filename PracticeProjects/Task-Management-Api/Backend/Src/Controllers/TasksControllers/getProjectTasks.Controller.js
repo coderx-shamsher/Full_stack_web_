@@ -15,18 +15,18 @@ export const getAllProjectTasksController = (req, res) => {
   const page = Number(req.query.page ?? 1);
   const limit = Number(req.query.limit ?? 10);
 
-  // search 
-  const { search} = req.query;
+  // search
+  const { search } = req.query;
 
   if (
-  search !== undefined &&
-  (typeof search !== "string" || search.trim().length > 100)
-) {
-  return res.status(400).json({
-    success: false,
-    message: "Search must be a string of at most 100 characters",
-  });
-}
+    search !== undefined &&
+    (typeof search !== "string" || search.trim().length > 100)
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Search must be a string of at most 100 characters",
+    });
+  }
 
   // req.query ->
   const { status, priority } = req.query;
@@ -65,17 +65,17 @@ export const getAllProjectTasksController = (req, res) => {
 
   const sortColumn = sortBy || "created_at";
   const sortOrder = (order || "DESC").toUpperCase();
- 
-  // validate ->> 
+
+  // validate ->>
   if (
-  !allowedSortColumns.includes(sortColumn) ||
-  !allowedSortOrders.includes(sortOrder)
-) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid sorting field or order",
-  });
-}
+    !allowedSortColumns.includes(sortColumn) ||
+    !allowedSortOrders.includes(sortOrder)
+  ) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid sorting field or order",
+    });
+  }
 
   //  Validate page and limit
   if (
@@ -94,6 +94,49 @@ export const getAllProjectTasksController = (req, res) => {
   // Calculate offset
   const offset = (page - 1) * limit;
 
+  // specific fields user can request 
+  const { fields } = req.query;
+
+  const allowedFields = [
+    "taskId",
+    "title",
+    "description",
+    "status",
+    "priority",
+    "due_date",
+    "created_at",
+    "updated_at",
+    "assigned_to",
+    "created_by",
+  ]; // yeh fields he allowed hai 
+
+  let selectedFields = ["*"]; // default if user ne kuch nhi send kiya ! 
+ 
+  // fields validations -->> 
+  if (fields !== undefined) {
+    if (typeof fields !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Fields must be a comma-separated string",
+      });
+    }
+  
+    // removing spaces and splited by comma 
+    selectedFields = fields.split(",").map((field) => field.trim());
+
+    if (
+      selectedFields.length === 0 ||
+      selectedFields.some((field) => !allowedFields.includes(field))
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid fields requested",
+      });
+    }
+
+    selectedFields = [...new Set(selectedFields)];
+  }
+
   // project exits ?
   checkProjectExistsQuery(projectId, ownerId, res);
 
@@ -104,9 +147,19 @@ export const getAllProjectTasksController = (req, res) => {
 
   // get task query func
   // improved with filter + pagination ->>
-  getProjectTasksQuery(projectId, limit, offset, page, res, {
-    status,
-    priority,
-    search
-  },sortColumn,sortOrder);
+  getProjectTasksQuery(
+    projectId,
+    limit,
+    offset,
+    page,
+    res,
+    {
+      status,
+      priority,
+      search,
+    },
+    sortColumn,
+    sortOrder,
+    selectedFields
+  );
 };
