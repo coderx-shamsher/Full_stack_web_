@@ -7,10 +7,10 @@ export const getProjectTasksQuery = async (
   page,
   res,
   filter = {},
-   sortColumn = "created_at",
+  sortColumn = "created_at",
   sortOrder = "DESC",
 ) => {
-try {
+  try {
     // Step 1: Build filter conditions
     let filterQuery = "";
     const filterValues = [];
@@ -25,6 +25,13 @@ try {
       filterValues.push(filter.priority);
     }
 
+    if (filter.search?.trim()) {
+      filterQuery += ` AND (title LIKE ? OR description LIKE ?)`;
+
+      const searchTerm = `%${filter.search.trim()}%`;
+
+      filterValues.push(searchTerm, searchTerm);
+    }
     // Step 2: Fetch tasks with filters + pagination
     // const [tasks] = await pool.query(
     //   `SELECT *
@@ -35,7 +42,7 @@ try {
     //   [projectId, ...filterValues, limit, offset],
     // );
 
-   /// updated _>> sorting + filter + pagination query 
+    /// updated _>> sorting + filter + pagination query
     const [tasks] = await pool.query(
       `SELECT *
        FROM tasks
@@ -57,24 +64,20 @@ try {
     const total = countOFTasks[0].total;
 
     // Step 5: Debug logs
-    console.log(
-      "\n-------- DB Query Fetch Logs --------\n",
-    );
+    console.log("\n-------- DB Query Fetch Logs --------\n");
 
     console.log("Project ID:", projectId);
     console.log("Applied Filters:", filter);
     console.log("Total Matching Tasks:", total);
     console.log("Fetched Tasks:", tasks);
 
-    console.log(
-      "\n-------- DB Query Fetch Logs End --------\n",
-    );
+    console.log("\n-------- DB Query Fetch Logs End --------\n");
 
     // Step 6: Send response
     return res.status(200).json({
       success: true,
       pagination: {
-        totalTasks:total,
+        totalTasks: total,
         page,
         limit,
         totalPages: Math.ceil(total / limit),
@@ -82,7 +85,7 @@ try {
       data: tasks,
     });
 
-
+    
   } catch (error) {
     console.log("\n-------- DB Error in Tasks Fetch --------\n");
     console.error("Get Project Tasks Error:", error);
