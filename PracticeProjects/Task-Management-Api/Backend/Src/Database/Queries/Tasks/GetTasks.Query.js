@@ -9,6 +9,7 @@ export const getProjectTasksQuery = async (
   filter = {},
   sortColumn = "created_at",
   sortOrder = "DESC",
+  selectedFields = ["*"],
 ) => {
   try {
     // Step 1: Build filter conditions
@@ -32,6 +33,15 @@ export const getProjectTasksQuery = async (
 
       filterValues.push(searchTerm, searchTerm);
     }
+
+    let columns;
+
+    if (selectedFields.includes("*")) {
+      columns = "*";
+    } else {
+      columns = selectedFields.join(", ");
+    }
+
     // Step 2: Fetch tasks with filters + pagination
     // const [tasks] = await pool.query(
     //   `SELECT *
@@ -44,7 +54,7 @@ export const getProjectTasksQuery = async (
 
     /// updated _>> sorting + filter + pagination query
     const [tasks] = await pool.query(
-      `SELECT *
+      `SELECT ${columns}
        FROM tasks
        WHERE project_id = ? ${filterQuery}
        ORDER BY ${sortColumn} ${sortOrder}, taskId DESC
@@ -84,8 +94,6 @@ export const getProjectTasksQuery = async (
       },
       data: tasks,
     });
-
-    
   } catch (error) {
     console.log("\n-------- DB Error in Tasks Fetch --------\n");
     console.error("Get Project Tasks Error:", error);
@@ -95,7 +103,6 @@ export const getProjectTasksQuery = async (
       success: false,
       message: "Internal server error | Tasks Not Fetched ...",
     });
-
   }
 };
 
