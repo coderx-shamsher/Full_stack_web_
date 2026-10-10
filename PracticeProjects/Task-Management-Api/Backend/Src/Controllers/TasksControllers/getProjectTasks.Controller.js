@@ -11,14 +11,25 @@ export const getAllProjectTasksController = (req, res) => {
   console.log();
   console.log("OwnerId => ", ownerId);
 
-  // Step 2: Read pagination parameters
+  // Read pagination parameters
   const page = Number(req.query.page ?? 1);
   const limit = Number(req.query.limit ?? 10);
 
+  // search 
+  const { search} = req.query;
+
+  if (
+  search !== undefined &&
+  (typeof search !== "string" || search.trim().length > 100)
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Search must be a string of at most 100 characters",
+  });
+}
+
   // req.query ->
   const { status, priority } = req.query;
-  // req.query ->
-  const { sortBy, order } = req.query;
 
   // validate statuses -->>
   const validStatuses = ["todo", "in_progress", "completed"];
@@ -38,6 +49,9 @@ export const getAllProjectTasksController = (req, res) => {
       message: "Invalid task priority",
     });
   }
+
+  // req.query ->
+  const { sortBy, order } = req.query;
 
   const allowedSortColumns = [
     "created_at",
@@ -63,7 +77,7 @@ export const getAllProjectTasksController = (req, res) => {
   });
 }
 
-  // Step 3: Validate page and limit
+  //  Validate page and limit
   if (
     typeof page !== "number" ||
     page < 1 ||
@@ -77,7 +91,7 @@ export const getAllProjectTasksController = (req, res) => {
     });
   }
 
-  // Step 4: Calculate offset
+  // Calculate offset
   const offset = (page - 1) * limit;
 
   // project exits ?
@@ -93,5 +107,6 @@ export const getAllProjectTasksController = (req, res) => {
   getProjectTasksQuery(projectId, limit, offset, page, res, {
     status,
     priority,
+    search
   },sortColumn,sortOrder);
 };
