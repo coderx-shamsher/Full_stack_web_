@@ -15,6 +15,54 @@ export const getAllProjectTasksController = (req, res) => {
   const page = Number(req.query.page ?? 1);
   const limit = Number(req.query.limit ?? 10);
 
+  // req.query ->
+  const { status, priority } = req.query;
+  // req.query ->
+  const { sortBy, order } = req.query;
+
+  // validate statuses -->>
+  const validStatuses = ["todo", "in_progress", "completed"];
+  if (status && !validStatuses.includes(status)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid task status",
+    });
+  }
+
+  // validate -->> proiorities
+  const validPriorities = ["low", "medium", "high", "urgent"];
+
+  if (priority && !validPriorities.includes(priority)) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid task priority",
+    });
+  }
+
+  const allowedSortColumns = [
+    "created_at",
+    "updated_at",
+    "due_date",
+    "priority",
+    "title",
+  ];
+
+  const allowedSortOrders = ["ASC", "DESC"];
+
+  const sortColumn = sortBy || "created_at";
+  const sortOrder = (order || "DESC").toUpperCase();
+ 
+  // validate ->> 
+  if (
+  !allowedSortColumns.includes(sortColumn) ||
+  !allowedSortOrders.includes(sortOrder)
+) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid sorting field or order",
+  });
+}
+
   // Step 3: Validate page and limit
   if (
     typeof page !== "number" ||
@@ -41,7 +89,9 @@ export const getAllProjectTasksController = (req, res) => {
   //: Fetch paginated tasks and total count
 
   // get task query func
-  getProjectTasksQuery(projectId, limit, offset,page, res);
-
-
+  // improved with filter + pagination ->>
+  getProjectTasksQuery(projectId, limit, offset, page, res, {
+    status,
+    priority,
+  },sortColumn,sortOrder);
 };
