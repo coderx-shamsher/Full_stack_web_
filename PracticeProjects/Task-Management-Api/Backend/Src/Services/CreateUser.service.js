@@ -2,7 +2,7 @@ import { LookupUser } from "../Database/Queries/Check_Existing_user.js";
 import { CreateUserQuery } from "../Database/Queries/CreateUserQuery.js";
 import crypto from 'crypto'
 
-export async function CreateUserService(data,res){
+export async function CreateUserService(data,res,next){
      
     // Step 1 Creating hash
     // console.log(data.password)
@@ -12,6 +12,6 @@ export async function CreateUserService(data,res){
     //  console.log(data.password)
     
     // step 2 checkout existing user in db 
-    LookupUser(data,res)
+    LookupUser(data,res,next)
   
 }
