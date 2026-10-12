@@ -23,12 +23,13 @@ export const updateProjectMemberQuery = async (
       Message: "Project member updated successfully"
     });
  } catch (error) {
-    console.log("-----Error Db Logs ------------\n")
-    console.log("Update Project Member Error:", error);
-    console.log("-----Error Db Logs Ends------------\n")
-    return res.status(500).json({
-      Success: false,
-      Message: "Internal Server | DB Errors ",
-    });
+     error.context = {
+      controller: 'UpdateProjectMember.Controller.js',
+      file: "updateProjectMemberQuery.js",
+      function: "updateProjectMemberQuery ()",
+      operation: "Project member Updation Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 };

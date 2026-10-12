@@ -1,6 +1,6 @@
 import pool from "../Config/mysql.pool.js";
 
-export const addProjectMemberQuery = async (projectId, memberId, role,res) => {
+export const addProjectMemberQuery = async (projectId, memberId, role,res,next) => {
   try {
     const [result] = await pool.query(
       `INSERT INTO project_members
@@ -17,12 +17,13 @@ export const addProjectMemberQuery = async (projectId, memberId, role,res) => {
       Message: "Project member added successfully",
     });
   } catch (error) {
-    console.log("\n ---------Db Error Logs ------------\n ")
-    console.log("Add Project Member Error:", error);
-    console.log("\n ---------Db Error End ------------\n ")
-    return res.status(500).json({
-      Success: false,
-      Message: "Failed to add project member",
-    });
+      error.context = {
+      controller: 'AddProjectMember.Controller.js',
+      file: "AddProjectMember.Query.js",
+      function: "addProjectMemberQuery ()",
+      operation: "project memeber Insertion Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 };

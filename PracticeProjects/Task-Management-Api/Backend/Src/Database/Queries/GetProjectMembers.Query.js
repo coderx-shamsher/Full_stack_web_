@@ -1,5 +1,5 @@
 import pool from "../Config/mysql.pool.js";
-export const getProjectMembersQuery = async (projectId,res) => {
+export const getProjectMembersQuery = async (projectId,res,next) => {
   try {
     const [members] = await pool.query(
       `SELECT project_id, memberId, role, joined_at
@@ -16,12 +16,13 @@ export const getProjectMembersQuery = async (projectId,res) => {
       Members: members,
     });
   } catch (error) {
-    console.log("\n>--------< Db Error  Logs >---------->\n");
-    console.log("Get Project Members Error:", error);
-    console.log("\n>--------< Db Error  Logs >---------->\n");
-    return res.status(500).json({
-      Success: false,
-      Message: "Internal Server | Db Error ",
-    });
+      error.context = {
+      controller: 'getProjectMember.Controller.js',
+      file: "GetProjectMembers.Query.js",
+      function: "getProjectMembersQuery ()",
+      operation: "all Project Member Fetch Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 };

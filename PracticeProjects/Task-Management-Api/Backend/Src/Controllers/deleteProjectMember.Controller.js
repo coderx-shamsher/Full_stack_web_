@@ -3,7 +3,7 @@ import { checkExistProjectMemberForDeleteQuery } from "../Database/Queries/check
 import { checkProjectOwnerQuery } from "../Database/Queries/checkProjectOwner.Query.js";
 import { deleteProjectMemberQuery } from "../Database/Queries/deleteProjectMember.Query.js";
 
-export  function deleteProjectMemberController(req, res){
+export  function deleteProjectMemberController(req, res,next){
   
     const ownerId = req.User.userId;
     const projectId = req.params.projectId;
@@ -38,7 +38,7 @@ export  function deleteProjectMemberController(req, res){
   // ------- delele project member query  
     deleteProjectMemberQuery(
       projectId,
-      memberId,res
+      memberId,res,next
     );
 
    

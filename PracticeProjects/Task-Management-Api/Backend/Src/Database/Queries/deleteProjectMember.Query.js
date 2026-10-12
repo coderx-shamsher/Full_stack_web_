@@ -22,12 +22,13 @@ export const deleteProjectMemberQuery = async (
         });
         
     } catch (error) {
-   console.log("\n-------Db Errors Logs ------------- \n")
-   console.log("Delete Project Member Error:", error);
-   console.log("\n-------Db Errors Logs End------------- \n")
-    return res.status(500).json({
-      Success: false,
-      Message: "Internal Server | DB Error (user Not Removed...)"
-    });
+     error.context = {
+      controller: 'deleteProjectMember.Controller.js',
+      file: "deleteProjectMember.Query.js",
+      function: "deleteProjectMemberQuery ()",
+      operation: "Project member Deletion Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 };

@@ -1,7 +1,7 @@
 import { checkProjectOwnerQuery } from "../Database/Queries/checkProjectOwner.Query.js";
 import { getProjectMembersQuery } from "../Database/Queries/GetProjectMembers.Query.js";
 
-export const getProjectMembersController = (req, res) => {
+export const getProjectMembersController = (req, res,next) => {
   const ownerId = req.User.userId;
   const projectId = req.params.projectId;
 
@@ -14,5 +14,5 @@ export const getProjectMembersController = (req, res) => {
   // get all members
   // --------------------------
 
-  getProjectMembersQuery(projectId, res);
+  getProjectMembersQuery(projectId, res,next);
 };

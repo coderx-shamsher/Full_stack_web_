@@ -2,7 +2,7 @@ import { checkProjectMemberForUpdateQuery } from "../Database/Queries/CheckProje
 import { checkProjectOwnerQuery } from "../Database/Queries/checkProjectOwner.Query.js";
 import { updateProjectMemberQuery } from "../Database/Queries/updateProjectMemberQuery.js";
 
-export const updateProjectMemberController = async (req, res) => {
+export const updateProjectMemberController = async (req, res,next) => {
   
     const ownerId = req.User.userId;
     const projectId = req.params.projectId;
@@ -38,7 +38,7 @@ export const updateProjectMemberController = async (req, res) => {
     // ----------------------
     // Update project member query function
     // ----------------------
-    updateProjectMemberQuery(projectId, memberId, role,res);
+    updateProjectMemberQuery(projectId, memberId, role,res,next);
    
   
 }

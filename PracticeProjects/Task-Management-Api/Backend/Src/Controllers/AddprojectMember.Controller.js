@@ -3,7 +3,7 @@ import { checkProjectOwnerQuery } from "../Database/Queries/checkProjectOwner.Qu
 import { checkUserExistsQuery } from "../Database/Queries/CheckUserExists.Query.js";
 import { checkExistProjectMemberQuery } from "../Database/Queries/checkExistProjectMember.Query.js";
 
-export const addprojectMemberController = async   (req, res) => {
+export const addprojectMemberController = async   (req, res,next) => {
     // owner/requsting user
     const ownerId = req.User.userId;
 
@@ -49,7 +49,7 @@ export const addprojectMemberController = async   (req, res) => {
     // -------------------------------
     // 5. Add member (add member )
     // -------------------------------
-    addProjectMemberQuery(projectId, memberId, role, res);
+    addProjectMemberQuery(projectId, memberId, role, res,next);
 
     
 }
