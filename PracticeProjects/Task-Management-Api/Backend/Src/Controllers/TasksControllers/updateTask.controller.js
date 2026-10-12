@@ -3,7 +3,7 @@ import { checkProjectOwnerMemberQuery } from "../../Database/Queries/Tasks/check
 import { updateTaskQuery } from "../../Database/Queries/Tasks/UpdateTasks.Query.js";
 import { checkTaskByIdQuery } from "../../Database/Queries/Tasks/checkTaskbyId.Query.js";
 
-export  function updateTaskController(req, res) {
+export  function updateTaskController(req, res,next) {
   // console.log(req.body)
 
   // first project id

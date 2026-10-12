@@ -1,6 +1,6 @@
 import pool from "../../Config/mysql.pool.js";
 
-export const updateTaskQuery = async (req, res,taskId,project_Id) => {
+export const updateTaskQuery = async (req, res,taskId,project_Id,next) => {
   try {
     console.log(req.body);
 
@@ -91,9 +91,14 @@ export const updateTaskQuery = async (req, res,taskId,project_Id) => {
       });
     }
 
-  } catch (error) {
-    console.log("\n -------- Update Error Logs --------- \n");
-    console.log("Update Errors --> ", error);
-    console.log("\n -------- Update Error Logs End -------\n");
+  } catch (error) {  
+    error.context = {
+      controller: 'updateTask.Controller.js',
+      file: "UpdateTasks.Query.js",
+      function: "updateTasksQuery()",
+      operation: "Task Update (by ID) Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 };
