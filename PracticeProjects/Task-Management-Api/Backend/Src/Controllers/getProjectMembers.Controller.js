@@ -1,9 +1,23 @@
 import { checkProjectOwnerQuery } from "../Database/Queries/checkProjectOwner.Query.js";
 import { getProjectMembersQuery } from "../Database/Queries/GetProjectMembers.Query.js";
 
-export const getProjectMembersController = (req, res,next) => {
+export const getProjectMembersController = (req, res, next) => {
   const ownerId = req.User.userId;
   const projectId = req.params.projectId;
+
+  if (!projectId) {
+    return res.status(403).json({
+      Success: false,
+      Message: "projectid Needed !!",
+    });
+  }
+
+  if (typeof projectId !== "number") {
+    return res.status(403).json({
+      Success: false,
+      Message: "projectid Type invalid !!",
+    });
+  }
 
   // ----------------------
   //  check prject ownership
@@ -14,5 +28,5 @@ export const getProjectMembersController = (req, res,next) => {
   // get all members
   // --------------------------
 
-  getProjectMembersQuery(projectId, res,next);
+  getProjectMembersQuery(projectId, res, next);
 };
