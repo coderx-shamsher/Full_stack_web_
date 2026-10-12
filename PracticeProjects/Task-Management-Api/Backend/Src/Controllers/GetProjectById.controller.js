@@ -7,12 +7,26 @@ export const GetProjectsByIdController = async (req, res, next) => {
 
       // Project ID from URL
       const projectId = req.params.projectId;
+
       console.log("\n ------>> User Request logs --------- \n");
       console.log("JWT User ID:", userId);
       console.log();
       console.log("Requested Project ID:", projectId);
       console.log("\n ------>> User Requst logs end --------- \n");
-
+    
+      if(!projectId){
+        return res.status(403).json({
+          Success : false,
+          Message : "projectid Needed !!"
+        })
+      }
+   
+      if(typeof projectId !== "number" ){
+          return res.status(403).json({
+          Success : false,
+          Message : "projectid type invalid !!"
+        })
+      }
    
      // db opertions ->>> 
       const project = await getProjectByIdQuery(projectId,userId);
