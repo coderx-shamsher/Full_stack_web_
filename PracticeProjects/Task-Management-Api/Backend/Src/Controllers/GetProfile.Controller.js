@@ -1,6 +1,6 @@
 import { getProfileQuery } from "../Database/Queries/getProfileQuery.js";
 
-export async function getProfile(req,res) {
+export async function getProfile(req,res,next) {
     // console.log(req.body)
     console.log("REQ.USER:", req.User);
 
@@ -9,6 +9,6 @@ export async function getProfile(req,res) {
     console.log("USER REQUEST ID:", userId);
      
      // db cal here -> 
-    getProfileQuery(userId,res)
+    getProfileQuery(userId,res,next)
 
 }

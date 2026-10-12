@@ -1,5 +1,5 @@
 import { RefreshTokens } from "../Services/Auth.RefreshAccess.service.js";
-export function RefreshTokensController(req, res) {
+export function RefreshTokensController(req, res,next) {
   
     try {
 
@@ -40,13 +40,14 @@ export function RefreshTokensController(req, res) {
         });
 
     } catch (error) {
-
-        console.log("Refresh token error:", error.message);
-
-        return res.status(401).json({
-            success: false,
-            message: "Invalid or expired refresh token",
-        });
+  error.context = {
+      controller: "RefreshTokens.Controller.js",
+      file: "RefreshTokens.Controller.js",
+      function: "RefreshTokensController ()",
+      operation: "Auth | Refresh Tokens  |  Failed !! ",
+      layer: "BackEnd  Auth | Tokens  ",
+    };
+    next(error);
     }
 
 }

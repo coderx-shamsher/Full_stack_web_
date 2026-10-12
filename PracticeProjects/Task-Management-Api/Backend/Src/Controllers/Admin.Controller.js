@@ -1,7 +1,7 @@
 import { AdminDashBoard } from "../Controllers/AdminDashboard.Controller.js";
 import pool from "../Database/Config/mysql.pool.js";
 
-export const AdminRouteController = async (req, res) => {
+export const AdminRouteController = async (req, res, next) => {
   const { userId, role } = req.body;
 
   console.log("\n------------<Requst Start >------------\n");
@@ -41,7 +41,7 @@ export const AdminRouteController = async (req, res) => {
         console.log("\n-----------<End of Db Query Result>------------\n");
 
         // if user founded with userid then we give his dashboard !!
-        AdminDashBoard(userId,user[0].username,role, res);
+        AdminDashBoard(userId, user[0].username, role, res);
       }
 
       if (!user.length > 0) {
@@ -55,14 +55,19 @@ export const AdminRouteController = async (req, res) => {
         });
       }
     } catch (error) {
-      console.log("\nError in DB Query \n");
-      console.log(error);
-      console.log("\n-----------<End of Error Statement>------------\n");
+      error.context = {
+        controller: "Admin.Controller.js",
+        file: "Admin.Controller.js",
+        function: "query Inside inside this file ",
+        operation: "Admin User Fetch Failed !! ",
+        layer: "Database Query",
+      };
+      next(error);
     }
-  }else{
-     return res.status(404).json({
-        Success : false,
-        Message : "UserID is not Macthed with Token Signature !! (Invalid id )"
-     })
+  } else {
+    return res.status(404).json({
+      Success: false,
+      Message: "UserID is not Macthed with Token Signature !! (Invalid id )",
+    });
   }
 };
