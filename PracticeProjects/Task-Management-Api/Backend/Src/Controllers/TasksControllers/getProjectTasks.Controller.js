@@ -2,7 +2,7 @@ import { checkProjectOwnerMemberQuery } from "../../Database/Queries/Tasks/check
 import { checkProjectExistsQuery } from "../../Database/Queries/Tasks/checProjectExistsById.Query.js";
 import { getProjectTasksQuery } from "../../Database/Queries/Tasks/GetTasks.Query.js";
 
-export const getAllProjectTasksController = (req, res) => {
+export const getAllProjectTasksController = (req, res,next) => {
   const projectId = req.params.projectId;
 
   const ownerId = req.User.userId;
@@ -153,6 +153,7 @@ export const getAllProjectTasksController = (req, res) => {
     offset,
     page,
     res,
+    next,
     {
       status,
       priority,
