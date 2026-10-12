@@ -6,7 +6,7 @@ export const updateProjectQuery = async (
   description,
   projectStatus,
   ownerId,
-  res,
+  res,next
 ) => {
   try {
     const [result] = await pool.query(
@@ -33,12 +33,14 @@ export const updateProjectQuery = async (
     });
 
   } catch (error) {
-    console.log("Update Project Error:", error);
-
-    return res.status(500).json({
-      Success: false,
-      Message: "Failed to update project",
-    });
+       error.context = {
+      controller: "UpdateProjects.Controller.js",
+      file: "UpdateProject.query.js",
+      function: "updateProjectQuery ()",
+      operation: "project Updation Failed !! ",
+      layer: "Database Query",
+    };
+    next(error);
   }
 
 };

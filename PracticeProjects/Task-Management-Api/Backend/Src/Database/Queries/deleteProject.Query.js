@@ -1,6 +1,6 @@
 import pool from "../Config/mysql.pool.js";
 
-export const deleteProjectQuery = async (projectId,onwerId, res) => {
+export const deleteProjectQuery = async (projectId,onwerId, res, next) => {
 
   try {
 
@@ -34,10 +34,13 @@ export const deleteProjectQuery = async (projectId,onwerId, res) => {
     });
 
   } catch (error) {
-    console.log("Delete Project Error:", error);
-    return res.status(500).json({
-      Success: false,
-      Message: "Failed to delete project",
-    });
+      error.context = {
+      controller: "DeleteProject.Controller.js",
+      file: "deleteProject.Query.js",
+      function: "deleteProjectQuery ()",
+      operation: "project Deletion Failed !! ",
+      layer: "Database Query",
+    };
+    next(error);
   }
 };

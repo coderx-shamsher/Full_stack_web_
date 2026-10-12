@@ -5,7 +5,7 @@ export async function CreateProjectsQuery(
   projectName,
   description,
   projectStatus,
-  res,
+  res,next
 ) {
   try {
     const [project] = await pool.query(
@@ -28,12 +28,13 @@ export async function CreateProjectsQuery(
     //     message: "Project Created Successfull",
     //   }
   } catch (error) {
-    console.log("\n --------- Error >>-------- \n");
-    console.log(error, "\n");
-    console.log("\n --------- Error  End <<-------- \n");
-    return res.status(500).json({
-      success: false,
-      message: "Project Creation failed..",
-    });
+     error.context = {
+      controller: 'Projects.Controller.js',
+      file: "projects.query.js",
+      function: "CreateProjectsQuery ()",
+      operation: "Project Creation Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 }
