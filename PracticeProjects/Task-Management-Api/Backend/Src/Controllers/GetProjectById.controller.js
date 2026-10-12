@@ -1,6 +1,6 @@
 import { getProjectByIdQuery } from "../Database/Queries/GetProjectsById.Query.js";
 
-export const GetProjectsByIdController = async (req, res) => {
+export const GetProjectsByIdController = async (req, res, next) => {
     try {
       // User identity from JWT
       const userId = req.User.userId;
@@ -28,11 +28,13 @@ export const GetProjectsByIdController = async (req, res) => {
         Project: project[0],
       });
     } catch (error) {
-      console.log("Get Project Error:", error);
-
-      return res.status(500).json({
-        Success: false,
-        Message: "Failed to fetch project",
-      });
+        error.context = {
+      controller: "GetProjectById.Controller.js",
+      file: "GetProjectsById.Query.js",
+      function: "getProjectByIdQuery ()",
+      operation: "project by id Fetch Failed !! ",
+      layer: "Database Query",
+    };
+    next(error);
     }
   }

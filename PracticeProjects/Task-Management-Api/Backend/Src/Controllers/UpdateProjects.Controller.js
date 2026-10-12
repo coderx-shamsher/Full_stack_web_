@@ -1,6 +1,6 @@
 import { updateProjectQuery } from "../Database/Queries/UpdateProject.query.js";
 
-export async function UpdateProjectController(req, res) {
+export async function UpdateProjectController(req, res,next) {
   const userId = req.User.userId;
   const projectId = req.params.projectId;
 
@@ -16,7 +16,7 @@ export async function UpdateProjectController(req, res) {
     description,
     projectStatus,
     userId,
-    res,
+    res, next 
   );
 
 }
