@@ -6,6 +6,7 @@ export const getProjectTasksQuery = async (
   offset,
   page,
   res,
+  next,
   filter = {},
   sortColumn = "created_at",
   sortOrder = "DESC",
@@ -94,15 +95,15 @@ export const getProjectTasksQuery = async (
       },
       data: tasks,
     });
-  } catch (error) {
-    console.log("\n-------- DB Error in Tasks Fetch --------\n");
-    console.error("Get Project Tasks Error:", error);
-    console.log("\n-------- DB Error in End --------\n");
-
-    return res.status(500).json({
-      success: false,
-      message: "Internal server error | Tasks Not Fetched ...",
-    });
+  } catch (error) {  
+    error.context = {
+      controller: 'getProjectTasks.Controller.js',
+      file: "getTasks.Query.js",
+      function: "getProjectTasksQuery()",
+      operation: "Task Fetch/(get task) Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 };
 
