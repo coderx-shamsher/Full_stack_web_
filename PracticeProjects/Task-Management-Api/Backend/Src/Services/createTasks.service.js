@@ -13,7 +13,7 @@ export const CreateTaskService = ({
   status,
   priority,
   dueDate,
-  res,
+  res,next
 }) => {
   // validate project exists bhi krta hai k nhi with project id
   // check project exits
@@ -36,7 +36,7 @@ export const CreateTaskService = ({
     status,
     priority,
     dueDate,
-    res,
+    res,next
   );
   
 };

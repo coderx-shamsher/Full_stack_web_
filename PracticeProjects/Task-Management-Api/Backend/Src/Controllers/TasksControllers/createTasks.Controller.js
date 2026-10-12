@@ -1,6 +1,6 @@
 import { CreateTaskService } from "../../Services/createTasks.service.js";
 
-export const createTaskController = async (req, res) => {
+export const createTaskController = async (req, res,next) => {
 
     const projectId = req.params.projectId;
  
@@ -47,7 +47,7 @@ export const createTaskController = async (req, res) => {
       description,
       status,
       priority,
-      dueDate: due_date,res
+      dueDate: due_date,res,next
     });
 
 };
