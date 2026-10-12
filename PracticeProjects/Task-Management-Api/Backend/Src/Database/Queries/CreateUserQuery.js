@@ -4,7 +4,7 @@ import {
 } from "../../Services/Auth.GenTokens.service.js";
 import pool from "../Config/mysql.pool.js";
 
-export async function CreateUserQuery(data, res) {
+export async function CreateUserQuery(data, res,next) {
   const { userId, username, email, password, role } = data;
 
   try {

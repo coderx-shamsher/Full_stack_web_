@@ -1,6 +1,6 @@
 import pool from "../Config/mysql.pool.js";
 
-export async function getProfileQuery(userId, res) {
+export async function getProfileQuery(userId, res,next) {
 try {
     console.log("USER ID:", userId);
 
@@ -27,11 +27,13 @@ try {
     });
 
 } catch (error) {
-    console.log("Error fetching user profile:", error);
-
-    return res.status(500).json({
-        success: false,
-        message: "Internal server error"
-    });
+  error.context = {
+      controller: "GetProfile.Controller.js",
+      file: "getProfileQuery.js",
+      function: "getProfileQuery ()",
+      operation: "User Profile Fetching  Failed !! ",
+      layer: "DB Query  ",
+    };
+    next(error);
 }
 }

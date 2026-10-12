@@ -2,7 +2,7 @@
 import pool from "../Config/mysql.pool.js";
 import { CreateUserQuery } from "./CreateUserQuery.js";
 
-export async function LookupUser(data,res) {
+export async function LookupUser(data,res,next) {
     // let lookup user by email
   const { userId, email } = data;
     
@@ -22,14 +22,17 @@ export async function LookupUser(data,res) {
             console.log("Need to create this user!!")
         
             // call the create user query here 
-            CreateUserQuery(data,res)
+            CreateUserQuery(data,res,next)
         }
 
     } catch (error) {
-    console.error("User check failed:", error);
-     return res.status(500).json({
-        message: "Internal server error",
-        success: false
-    });
+      error.context = {
+      controller: "CreateUser.Controller.js",
+      file: "Check_Existing_user.js",
+      function: "LookupUser ()",
+      operation: "Lookup User  ||  Failed !! ",
+      layer: "BackEnd Auth User |  DB Query  ",
+    };
+    next(error);
     }
 }

@@ -67,7 +67,13 @@ export async function Login_Query(hashedpassword, data, res) {
       });
     }
   } catch (error) {
-    console.log("\n Error in Login user ⬇️❌‼️");
-    console.log(error);
+      error.context = {
+      controller: "AuthUser.Controller.js",
+      file: "Login_Query.js",
+    function: "Login_Query ()",
+      operation: "Auth User  | User Login |  Failed !! ",
+      layer: "BackEnd Auth User |  DB Query  ",
+    };
+    next(error);
   }
 }
