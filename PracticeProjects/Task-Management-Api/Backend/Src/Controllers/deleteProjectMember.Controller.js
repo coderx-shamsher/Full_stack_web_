@@ -3,44 +3,56 @@ import { checkExistProjectMemberForDeleteQuery } from "../Database/Queries/check
 import { checkProjectOwnerQuery } from "../Database/Queries/checkProjectOwner.Query.js";
 import { deleteProjectMemberQuery } from "../Database/Queries/deleteProjectMember.Query.js";
 
-export  function deleteProjectMemberController(req, res,next){
-  
-    const ownerId = req.User.userId;
-    const projectId = req.params.projectId;
-    const memberId = req.params.memberId;
-   
-    // 
-    console.log("\n-------Request Data Logs ------- \n")
-    console.log("Owner Id : ",ownerId)
-    console.log("Project Id : ",projectId)
-    console.log("Member Id : ",memberId)
-    console.log("\n-------Request Data Logs End------- \n")
+export function deleteProjectMemberController(req, res, next) {
+  const ownerId = req.User.userId;
+  const projectId = req.params.projectId;
+  const memberId = req.params.memberId;
 
-   /// ------->
-   /// project ownership checkout -> 
-   /// ------->
-    checkProjectOwnerQuery(
-      projectId,
-      ownerId,res
-    );
+  //
+  console.log("\n-------Request Data Logs ------- \n");
+  console.log("Owner Id : ", ownerId);
+  console.log("Project Id : ", projectId);
+  console.log("Member Id : ", memberId);
+  console.log("\n-------Request Data Logs End------- \n");
 
+  if (!projectId) {
+    return res.status(403).json({
+      Success: false,
+      Message: "projectid Needed !!",
+    });
+  }
 
-   /// ->> 
-   //  ------ checkprojectexisting member -> 
-  checkExistProjectMemberForDeleteQuery(
-      projectId,
-      memberId,res
-    );
-    
-    
+  if (typeof projectId !== "number") {
+    return res.status(403).json({
+      Success: false,
+      Message: "projectid type invalid !!",
+    });
+  }
 
-  // ->> 
-  // ------- delele project member query  
-    deleteProjectMemberQuery(
-      projectId,
-      memberId,res,next
-    );
+  if (!memberId) {
+    return res.status(403).json({
+      Success: false,
+      Message: "memberId Needed !!",
+    });
+  }
 
-   
- 
+  if (typeof memberId !== "number") {
+    return res.status(403).json({
+      Success: false,
+      Message: "memberId type invalid !!",
+    });
+  }
+
+  /// ------->
+  /// project ownership checkout ->
+  /// ------->
+  checkProjectOwnerQuery(projectId, ownerId, res);
+
+  /// ->>
+  //  ------ checkprojectexisting member ->
+  checkExistProjectMemberForDeleteQuery(projectId, memberId, res);
+
+  // ->>
+  // ------- delele project member query
+  deleteProjectMemberQuery(projectId, memberId, res, next);
 }
