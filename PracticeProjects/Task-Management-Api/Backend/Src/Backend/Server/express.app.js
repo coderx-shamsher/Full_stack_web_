@@ -10,6 +10,7 @@ import projectsRouter from '../../Routes/Projects.Routes.js'
 import projectMembersRouter from '../../Routes/Projects_members.Routes.js'
 import tasksRouter from '../../Routes/Tasks.Routes.js'
 import commentsRouter from '../../Routes/Comments.Routes.js'
+import errorMiddleware from '../../Middlewares/ErrorMiddleware.js'
 
 const app = express()          
 app.use(express.json())                  
@@ -17,7 +18,6 @@ app.use(cookieParser())
 app.use(homeRouter)
 app.use('/api',HealthRouter)
 app.use('/api',UserRouter)  //  /api/signup
-app.use('/api/auth',AuthRouter)
 app.use('/api/auth',AuthRouter)
 app.use('/api/user',getProfileRouter) 
 app.use('/api/admin',adminRouter)
@@ -36,6 +36,10 @@ app.use('/api',tasksRouter)
 
 // /api/projects/:projectId/comments
 app.use("/api",commentsRouter)
+
+// Centralized error handling — after all routes
+// error middelware 
+app.use(errorMiddleware)
 
 
 export default  app             
