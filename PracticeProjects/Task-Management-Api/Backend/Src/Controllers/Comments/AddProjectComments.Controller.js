@@ -2,7 +2,7 @@ import { checkProjectExistsQuery } from '../../Database/Queries/Tasks/checProjec
 import { checkProjectOwnerMemberQuery } from '../../Database/Queries/Tasks/checkProject_member_OR_owner.Query.js';
 import { InsertProjectCommentQuery } from '../../Database/Queries/comments/InsertProjectComment.Query.js';
 
-export const InsertProjectCommentController = (req, res) => {
+export const InsertProjectCommentController = (req, res,next) => {
   const projectId = Number(req.params.projectId);
   const userId = req.User.userId;
   const { comment } = req.body;
@@ -41,5 +41,5 @@ export const InsertProjectCommentController = (req, res) => {
   // check project owner member Query
   checkProjectOwnerMemberQuery(projectId, userId, res);
 
-  InsertProjectCommentQuery(projectId, userId, comment, res);
+  InsertProjectCommentQuery(projectId, userId, comment, res,next);
 };

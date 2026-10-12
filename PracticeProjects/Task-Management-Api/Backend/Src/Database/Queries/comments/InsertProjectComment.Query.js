@@ -1,6 +1,6 @@
 import pool from "../../Config/mysql.pool.js";
 
-export async function InsertProjectCommentQuery(projectId, userId, comment, res) {
+export async function InsertProjectCommentQuery(projectId, userId, comment, res,next) {
   try {
     const [createdComment] = await pool.query(
       `INSERT INTO project_comments
@@ -30,9 +30,14 @@ export async function InsertProjectCommentQuery(projectId, userId, comment, res)
         message: "Comment creation Failed",
       });
     }
-  } catch (error) {
-    console.log("\n ----- Insert Comment Error Logs ------\n");
-    console.log(error);
-    console.log("\n ----- Insert Comment Error Logs End ------\n");
+  } catch (error) {  
+    error.context = {
+      controller: 'AddProjectComments.Controller.js',
+      file: "InsertProjectComment.Query.js",
+      function: "InsertProjectCommentQuery ()",
+      operation: "Comment Insertion Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 }
