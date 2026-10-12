@@ -1,7 +1,7 @@
 import { getprojectcommentsQuery } from "../../Database/Queries/comments/getAllprojectComments.Query.js";
 import { checkProjectOwnerMemberQuery } from "../../Database/Queries/Tasks/checkProject_member_OR_owner.Query.js";
 
-export const getprojectCommentsController = (req, res) => {
+export const getprojectCommentsController = (req, res,next) => {
   const projectId = Number(req.params.projectId);
   const userId = req.User.userId;
 
@@ -20,5 +20,5 @@ export const getprojectCommentsController = (req, res) => {
   checkProjectOwnerMemberQuery(projectId, userId, res);
 
   // -->> get project comments query ->
-  getprojectcommentsQuery(projectId, res);
+  getprojectcommentsQuery(projectId, res,next);
 };

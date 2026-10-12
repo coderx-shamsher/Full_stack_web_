@@ -23,8 +23,13 @@ export const getprojectcommentsQuery = async (projectId, res) => {
       });
     }
   } catch (error) {
-    console.log("\n ---Db Error logs ------>> \n");
-    console.log("Get project Comments Error -->> \n", error);
-    console.log("\n----Error logs End ------------\n ");
+     error.context = {
+      controller: 'getAllProjectComments.Controller.js',
+      file: "getAllProjectComments.Query.js",
+      function: "getprojectcommentsQuery ()",
+      operation: "Comment Fetch (get all project) Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 };
