@@ -2,7 +2,7 @@ import { checkProjectExistsQuery } from "../../Database/Queries/Tasks/checProjec
 import { checkProjectOwnerMemberQuery } from "../../Database/Queries/Tasks/checkProject_member_OR_owner.Query.js";
 import { TaskExistsQuery } from "../../Database/Queries/Tasks/TaskExists.Query.js";
 
-export function getTasksByIdController(req, res) {
+export function getTasksByIdController(req, res,next) {
   console.log("\nProject Owner -> ", req.User.userId);
   console.log("\nProjectId -> ", req.params.projectId);
   console.log("\nTaskID    -> ", req.params.taskId);
@@ -19,5 +19,6 @@ export function getTasksByIdController(req, res) {
   checkProjectOwnerMemberQuery(projectId, projectOwnerId, res);
 
   // check for task exists or not and task belongs to that project or not at same time
-  TaskExistsQuery(taskId, projectId, res);
+  // or ager task hai to use return krna use ko 
+  TaskExistsQuery(taskId, projectId, res,next);
 }
