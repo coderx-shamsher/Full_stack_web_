@@ -3,7 +3,7 @@ import { deleteProjectCommentQuery } from "../../Database/Queries/comments/delet
 import { checkProjectOwnerMemberQuery } from "../../Database/Queries/Tasks/checkProject_member_OR_owner.Query.js";
 import { checkProjectExistsQuery } from "../../Database/Queries/Tasks/checProjectExistsById.Query.js";
 
-export function deleteProjectCommentController(req, res) {
+export function deleteProjectCommentController(req, res,next) {
   const projectId = Number(req.params.projectId);
   const commentId = Number(req.params.commentId);
   const userId = req.User.userId;
@@ -39,5 +39,5 @@ export function deleteProjectCommentController(req, res) {
   checkProjectCommentExistsQuery(commentId, projectId, res);
 
   /// final delete query
-  deleteProjectCommentQuery(projectId, commentId, userId, res);
+  deleteProjectCommentQuery(projectId, commentId, userId, res,next);
 }

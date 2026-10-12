@@ -3,7 +3,7 @@ import { updateprojectCommentQuery } from "../../Database/Queries/comments/updat
 import { checkProjectOwnerMemberQuery } from "../../Database/Queries/Tasks/checkProject_member_OR_owner.Query.js";
 import { checkProjectExistsQuery } from "../../Database/Queries/Tasks/checProjectExistsById.Query.js";
 
-export const updateprojectCommentController = async (req, res) => {
+export const updateprojectCommentController = async (req, res, next) => {
   const projectId = Number(req.params.projectId);
   const commentId = Number(req.params.commentId);
   const userId = req.User.userId;
@@ -54,7 +54,7 @@ export const updateprojectCommentController = async (req, res) => {
   checkProjectCommentExistsQuery(commentId, projectId, res)
 
   // update comment query ->
-  updateprojectCommentQuery(commentId, projectId, comment, res);
+  updateprojectCommentQuery(commentId, projectId, comment, res,next);
 
   
 };

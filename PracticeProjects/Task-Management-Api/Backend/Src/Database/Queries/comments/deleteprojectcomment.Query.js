@@ -4,7 +4,7 @@ export const deleteProjectCommentQuery = async (
   projectId,
   commentId,
   userId,
-  res,
+  res,next
 ) => {
   try {
     const [result] = await pool.query(
@@ -36,8 +36,13 @@ export const deleteProjectCommentQuery = async (
       });
     }
   } catch (error) {
-    console.log("\n ----- Delete Query Error Logs ---------\n");
-    console.log("DB Error ->> ", error);
-    console.log("\n ----- Delete Query Logs End ---------\n");
+  error.context = {
+      controller: 'deleteProjectComments.Controller.js',
+      file: "deleteprojectComment.Query.js",
+      function: "deleteProjectCommentQuery ()",
+      operation: "Comment Insertion Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 };

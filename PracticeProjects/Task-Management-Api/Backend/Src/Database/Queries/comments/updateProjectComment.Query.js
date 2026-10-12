@@ -18,8 +18,13 @@ export const updateprojectCommentQuery = async (commentId,projectId,comment,res)
     
     }
   } catch (error) {
-     console.log("\n -------Db Error Logs ------- \n")
-     console.log("Update Error : ",error)
-     console.log("\n -------Db Error Logs End ------- \n")
+       error.context = {
+      controller: 'UpdateProjectComments.Controller.js',
+      file: "updateProjectComment.Query.js",
+      function: "updateprojectCommentQuery ()",
+      operation: "Comment Updation Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 };
