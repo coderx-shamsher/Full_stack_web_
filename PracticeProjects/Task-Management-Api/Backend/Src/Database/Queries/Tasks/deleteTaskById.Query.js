@@ -1,6 +1,6 @@
 import pool from "../../Config/mysql.pool.js";
 
-export async function deleteTaskByIdQuery(taskId, res) {
+export async function deleteTaskByIdQuery(taskId, res,next) {
   try {
     const [deletedtask] = await pool.query(
       "delete from tasks where taskId = ?",
@@ -26,9 +26,14 @@ export async function deleteTaskByIdQuery(taskId, res) {
         Message: "Task Deleted Now !!",
       });
     }
-  } catch (error) {
-    console.log("\n --------- Db Error Logs ---------- \n");
-    console.log(" DB Errors Of Deletion -->>", error);
-    console.log("\n --------- Db Error Logs End ---------- \n");
+  } catch (error) {  
+    error.context = {
+      controller: 'deleteTaskById.Controller.js',
+      file: "deleteTaskById.Query.js",
+      function: "deleteTaskByIdQuery()",
+      operation: "Task Deletion Failed !! ",
+      layer: "Database Query",
+    };
+     next(error)
   }
 }

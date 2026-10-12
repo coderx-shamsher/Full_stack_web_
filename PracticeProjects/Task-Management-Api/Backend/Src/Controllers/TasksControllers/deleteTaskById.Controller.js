@@ -3,7 +3,7 @@ import { checkProjectExistsQuery } from "../../Database/Queries/Tasks/checProjec
 import { checkTaskByIdQuery } from "../../Database/Queries/Tasks/checkTaskbyId.Query.js";
 import { deleteTaskByIdQuery } from "../../Database/Queries/Tasks/deleteTaskById.Query.js";
 
-export const deleteTaskByidController = (req,res) => {       
+export const deleteTaskByidController = (req,res,next) => {       
          // request data verify 
 
     const projectId = req.params.projectId
@@ -31,6 +31,6 @@ export const deleteTaskByidController = (req,res) => {
 
     
     // 4th delete query function 
-     deleteTaskByIdQuery(taskId,res)
+     deleteTaskByIdQuery(taskId,res,next)
 }                             
 
