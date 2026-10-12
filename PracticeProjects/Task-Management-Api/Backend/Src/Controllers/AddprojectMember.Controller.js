@@ -28,6 +28,28 @@ export const addprojectMemberController = async   (req, res,next) => {
         Message: "userId and role are required",
       });
     }
+  
+    if(typeof memberId !== "number" ){
+       return res.status(403).json({
+        Success : false,
+         Message : "Type of memberId invalid !"
+       })
+    }
+
+    if(typeof projectId !== "number" ){
+       return res.status(403).json({
+        Success : false,
+         Message : "Type of projectId invalid !"
+       })
+    }
+
+    if(typeof role !== "string" ){
+       return res.status(403).json({
+        Success : false,
+         Message : "Type of role invalid !"
+       })
+    }
+   
 
     // -------------------------------
     // 2. Check project ownership
