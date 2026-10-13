@@ -115,5 +115,5 @@ export  function updateTaskController(req, res,next) {
    checkTaskByIdQuery(taskId,projectId,res)
   
   // 4th update task Query
-   updateTaskQuery(res,taskId,projectId)
+   updateTaskQuery(req,res,taskId,projectId)
 }

@@ -8,7 +8,7 @@ export const addprojectMemberController = async   (req, res,next) => {
     const ownerId = req.User.userId;
 
     // projectId from url
-    const projectId = req.params.projectId;
+    const projectId = Number(req.params.projectId)
 
     // member to add
     const { memberId, role } = req.body;

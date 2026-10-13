@@ -3,7 +3,7 @@ import { getProjectMembersQuery } from "../Database/Queries/GetProjectMembers.Qu
 
 export const getProjectMembersController = (req, res, next) => {
   const ownerId = req.User.userId;
-  const projectId = req.params.projectId;
+  const projectId = Number(req.params.projectId)
 
   if (!projectId) {
     return res.status(403).json({

@@ -1,6 +1,7 @@
 import { getProjectByIdQuery } from "../Database/Queries/GetProjectsById.Query.js";
 
-export const GetProjectsByIdController = async (req, res, next) => {
+
+export const GetProjectsByIdController = (req, res, next) => {
     try {
       // User identity from JWT
       const userId = req.User.userId;
@@ -27,24 +28,16 @@ export const GetProjectsByIdController = async (req, res, next) => {
           Message : "projectid type invalid !!"
         })
       }
-   
+    
+
      // db opertions ->>> 
-      const project = await getProjectByIdQuery(projectId,userId);
-      if (project.length === 0) {
-        return res.status(404).json({
-          Success: false,
-          Message: "Project not found",
-        });
-      }
-      
-      return res.status(200).json({
-        Success: true,
-        Project: project[0],
-      });
+      getProjectByIdQuery(projectId,userId,res);
+   
+    
     } catch (error) {
         error.context = {
       controller: "GetProjectById.Controller.js",
-      file: "GetProjectsById.Query.js",
+      file: "GetProjectById.Controller.js",
       function: "getProjectByIdQuery ()",
       operation: "project by id Fetch Failed !! ",
       layer: "Database Query",
