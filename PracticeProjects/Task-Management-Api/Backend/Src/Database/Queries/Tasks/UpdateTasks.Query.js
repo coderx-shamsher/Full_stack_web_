@@ -1,8 +1,9 @@
 import pool from "../../Config/mysql.pool.js";
 
-export const updateTaskQuery = async (res,taskId,project_Id,next) => {
+export const updateTaskQuery = async (req,res,taskId,project_Id,next) => {
   try {
-    
+       const { title, description, status, priority, due_date, assigned_to } =
+      req.body;
     const insertq = `UPDATE tasks
         SET 
          title = ? ,
