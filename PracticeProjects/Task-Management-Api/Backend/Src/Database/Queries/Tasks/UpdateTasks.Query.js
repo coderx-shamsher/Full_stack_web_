@@ -1,53 +1,8 @@
 import pool from "../../Config/mysql.pool.js";
 
-export const updateTaskQuery = async (req, res,taskId,project_Id,next) => {
+export const updateTaskQuery = async (res,taskId,project_Id,next) => {
   try {
-    console.log(req.body);
-
-    // validate data
-    const { title, description, status, priority, due_date, assigned_to } =
-      req.body;
-
-    if (!title) {
-      return res.status(400).json({
-        success: false,
-        message: "Task title is required",
-      });
-    }
-
-    if (!description) {
-      return res.status(400).json({
-        success: false,
-        message: "Task description is required",
-      });
-    }
-
-    if (!status) {
-      return res.status(400).json({
-        success: false,
-        message: "Task status is required",
-      });
-    }
-    if (!priority) {
-      return res.status(400).json({
-        success: false,
-        message: "Task priority is required",
-      });
-    }
-
-    if (!due_date) {
-      return res.status(400).json({
-        success: false,
-        message: "Task due_date is required",
-      });
-    }
-    if (!assigned_to) {
-      return res.status(400).json({
-        success: false,
-        message: "Task assign_to  is required",
-      });
-    }
-
+    
     const insertq = `UPDATE tasks
         SET 
          title = ? ,

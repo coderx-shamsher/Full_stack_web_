@@ -6,12 +6,12 @@ export const GetProjectsByIdController = async (req, res, next) => {
       const userId = req.User.userId;
 
       // Project ID from URL
-      const projectId = req.params.projectId;
-
+      const projectId = Number(req.params.projectId);
+  
       console.log("\n ------>> User Request logs --------- \n");
       console.log("JWT User ID:", userId);
       console.log();
-      console.log("Requested Project ID:", projectId);
+      console.log("Requested Project ID:", projectId, typeof projectId);
       console.log("\n ------>> User Requst logs end --------- \n");
     
       if(!projectId){

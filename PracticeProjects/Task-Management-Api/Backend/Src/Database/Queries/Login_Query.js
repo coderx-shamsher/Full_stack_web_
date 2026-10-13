@@ -56,7 +56,9 @@ export async function Login_Query(hashedpassword, data, res) {
 
       return res.status(200).json({
         Message: "Login SuccessFully.... ✅🚀",
-        user: result[0],
+        user: {
+          userId, username, userEmail, role
+        },
       });
     } else {
       console.log("\n User Login Failed (password and email invaild ❌‼️) \n");

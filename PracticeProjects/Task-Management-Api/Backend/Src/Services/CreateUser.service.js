@@ -70,7 +70,7 @@ export async function CreateUserService(data,res,next){
         })
      }
 
-     if(typeof role !== "string"){
+     if( role && typeof role !== "string"){
         return res.status(403).json({
             Success : false ,
             Message : "Role type invalid !! (only String)"
