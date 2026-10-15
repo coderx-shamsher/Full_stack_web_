@@ -49,9 +49,27 @@ end
 
 print() 
 
-error = false 
-if role == "admin" and not error 
+
+-- with not operator  print true 
+-- without not print false 
+-- lets see one by one 
+-- with and operator - dono condition k true hone par he true print hoga... 
+if 10 > 2 and not false == true
   then
      print("true")
+else 
+    print("False")
 end
+
+-- with or operator -->> 
+-- dono conditions mein se ek bhi true hoti hai to true print hoga ! 
+--
+if 10 < 2 or not false == false 
+  then
+     print("true")
+else 
+    print("False")
+end
+
+
 
