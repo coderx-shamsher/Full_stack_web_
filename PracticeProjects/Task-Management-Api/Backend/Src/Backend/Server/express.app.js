@@ -11,10 +11,25 @@ import projectMembersRouter from '../../Routes/Projects_members.Routes.js'
 import tasksRouter from '../../Routes/Tasks.Routes.js'
 import commentsRouter from '../../Routes/Comments.Routes.js'
 import errorMiddleware from '../../Middlewares/ErrorMiddleware.js'
+import helmet from 'helmet'
+import { apiLimiter } from '../../Middlewares/ratelimit.middleware.js'
 
 const app = express()          
-app.use(express.json())                  
+app.use(express.json({
+    limit : "20kb"
+}))                  
+
 app.use(cookieParser())
+
+// helmet 
+app.use(helmet())
+
+app.disable("x-powered-by")
+
+// api protection
+app.use('/api',apiLimiter)
+
+
 app.use(homeRouter)
 app.use('/api',HealthRouter)
 app.use('/api',UserRouter)  //  /api/signup
@@ -41,5 +56,6 @@ app.use("/api",commentsRouter)
 // error middelware 
 app.use(errorMiddleware)
 
+// 
 
 export default  app             
