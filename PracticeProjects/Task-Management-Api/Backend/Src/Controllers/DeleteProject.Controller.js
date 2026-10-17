@@ -1,7 +1,7 @@
 import { deleteProjectQuery } from "../Database/Queries/deleteProject.Query.js";
 
 export function deleteProjectController(req, res, next) {
-  const projectId = req.params.projectId;
+  const projectId = Number(req.params.projectId)
   const ownerId = req.User.userId;
   console.log("\n ProjectID User Requested !! -> ", projectId);
   console.log("\n OwnerID From jwt !! -> ", ownerId);
