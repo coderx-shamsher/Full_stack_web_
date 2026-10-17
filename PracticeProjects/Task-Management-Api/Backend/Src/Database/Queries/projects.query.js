@@ -1,3 +1,4 @@
+import { clearProjectCache } from "../../utils/clearProjectCache.js";
 import pool from "../Config/mysql.pool.js";
 
 export async function CreateProjectsQuery(
@@ -14,19 +15,20 @@ export async function CreateProjectsQuery(
     VALUES (?, ?, ?, ?)`,
       [ownerId, projectName, description, projectStatus],
     );
-
+    
     console.log("\n --------- Db Query Result >-------- \n");
     console.log(project, "\n");
     console.log("\n --------- Db Query End <-------- \n");
+    
+    // redis clear old cache 
+    await clearProjectCache(ownerId)
+    
     return res.status(200).json({
       success: true,
       message: "Project Created Successfull",
       projectId : project.insertId
     });
-    //   return {
-    //     success: true,
-    //     message: "Project Created Successfull",
-    //   }
+    
   } catch (error) {
      error.context = {
       controller: 'Projects.Controller.js',
