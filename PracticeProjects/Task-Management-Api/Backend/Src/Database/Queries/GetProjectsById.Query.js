@@ -1,7 +1,7 @@
 import pool from "../Config/mysql.pool.js";
+import redisClient from "../Config/redis.connection.js";
 
-async function checkOwnerAndMemberQueryfn(projectId, userId, res) {
-  
+async function checkOwnerAndMemberQueryfn(projectId, userId, res,cachekey) {
   const [owner] = await pool.query(
     `SELECT *
              FROM projects
@@ -11,10 +11,10 @@ async function checkOwnerAndMemberQueryfn(projectId, userId, res) {
   );
 
   if (owner.length === 0) {
-
     console.log("\n -> owner ", owner, "\n");
     console.log("\n checking if user is member of project ? -----> \n");
-
+  
+    // query for checking project member ?? 
     const [member] = await pool.query(
       `SELECT *
              FROM project_members
@@ -22,7 +22,8 @@ async function checkOwnerAndMemberQueryfn(projectId, userId, res) {
            AND memberId = ?`,
       [projectId, userId],
     );
-
+   
+    // if its a memeber )>> 
     if (member.length > 0) {
       console.log("\n Its Member -> ", member);
 
@@ -53,9 +54,14 @@ async function checkOwnerAndMemberQueryfn(projectId, userId, res) {
           role,
         } = result[0];
 
+        //  Store result for 60 seconds in redis cached 
+        await redisClient.set(cachekey, JSON.stringify(result[0]), {
+          EX: 60,
+        });
+
         return res.status(200).json({
           Success: true,
-          "Member & Project Detail": {
+          "Member his Project Detail": {
             "Role ->": role,
             MemberID: memberId,
             projectId: projectId,
@@ -63,20 +69,21 @@ async function checkOwnerAndMemberQueryfn(projectId, userId, res) {
             projectStatus: projectStatus,
             Description: description,
           },
+          source: "MySQL",
         });
       }
 
     }
 
-    // if your are not member -> 
-    if(member.length === 0){
-       console.log("\n Your are not Member also \n")
-       console.log("\n => ",member)
+    // if your are not member ->
+    if (member.length === 0) {
+      console.log("\n Your are not Member also \n");
+      console.log("\n => ", member);
 
-       return res.status(403).json({
-        Success : false,
-        Message: "You are not Owner && Member Of this project"
-       })
+      return res.status(403).json({
+        Success: false,
+        Message: "You are not Owner && Member Of this project",
+      });
     }
 
   }
@@ -85,10 +92,15 @@ async function checkOwnerAndMemberQueryfn(projectId, userId, res) {
     console.log("\n=====================================\n");
     console.log("Owner ->", owner);
     console.log("\n=====================================\n");
+
+    // destructure ->>
+    const { projectId, projectName, ownerId, description, projectStatus } =
+      owner[0];
     
-      // destructure ->>
-      const { projectId, projectName, ownerId, description, projectStatus } =
-        owner[0];
+        //  Store result for 60 seconds in redis 
+    await redisClient.set(cachekey, JSON.stringify(owner[0]), {
+      EX: 60,
+    });
 
     return res.status(200).json({
       Success: true,
@@ -100,19 +112,22 @@ async function checkOwnerAndMemberQueryfn(projectId, userId, res) {
         description,
         projectStatus,
       },
+      source: "MySQL",
     });
   }
 }
 
-export const getProjectByIdQuery = async (projectId, ownerId, res) => {
+export const getProjectByIdQuery = async (
+  projectId,
+  ownerId,
+  res,
+  cachekey,
+) => {
   try {
-    
-    // calculation function 
-    checkOwnerAndMemberQueryfn(projectId, ownerId, res);
-
-
+    // calculation function
+    checkOwnerAndMemberQueryfn(projectId, ownerId, res, cachekey);
   } catch (error) {
-     error.context = {
+    error.context = {
       controller: "GetProjectById.Controller.js",
       file: "GetProjectsById.Query.js",
       function: "checkOwnerAndMemberQueryfn ()",
