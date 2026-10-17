@@ -3,7 +3,7 @@ import { Login_Query } from "../Database/Queries/Login_Query.js";
 import pool from "../Database/Config/mysql.pool.js";
 
 export async function AuthServiceLoginUser(data, res,next) {
-  console.log(data);
+  // console.log(data);
 
   // db call to compare hash with stored password hash
   // comveting password into hash
