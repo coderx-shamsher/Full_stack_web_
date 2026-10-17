@@ -13,6 +13,7 @@ import commentsRouter from '../../Routes/Comments.Routes.js'
 import errorMiddleware from '../../Middlewares/ErrorMiddleware.js'
 import helmet from 'helmet'
 import { apiLimiter } from '../../Middlewares/ratelimit.middleware.js'
+import { httpLogger } from '../../Middlewares/logger.js'
 
 const app = express()          
 app.use(express.json({
@@ -29,9 +30,10 @@ app.disable("x-powered-by")
 // api protection
 app.use('/api',apiLimiter)
 
+app.use(httpLogger)
 
 app.use(homeRouter)
-app.use('/api',HealthRouter)
+app.use('/api/health',HealthRouter)
 app.use('/api',UserRouter)  //  /api/signup
 app.use('/api/auth',AuthRouter)
 app.use('/api/user',getProfileRouter) 
