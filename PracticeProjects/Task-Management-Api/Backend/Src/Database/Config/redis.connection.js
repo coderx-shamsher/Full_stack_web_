@@ -17,11 +17,11 @@ redisClient.on("error", (error) => {
 });
 
 redisClient.on("connect", () => {
-  console.log("Connecting to Redis...");
+  console.log("\n Connecting to Redis... \n");
 });
 
 redisClient.on("ready", () => {
-  console.log("Redis is ready to use ✅");
+  console.log(" Redis is ready to use ✅ \n ");
 });
 
 export default redisClient;
