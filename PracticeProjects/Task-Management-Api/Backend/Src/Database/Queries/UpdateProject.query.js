@@ -1,4 +1,6 @@
+import { clearProjectCache } from "../../utils/clearProjectCache.js";
 import pool from "../Config/mysql.pool.js";
+
 
 export const updateProjectQuery = async (
   projectId,
@@ -18,6 +20,9 @@ export const updateProjectQuery = async (
        WHERE projectId = ? AND ownerId =? `,
       [projectName, description, projectStatus, projectId, ownerId],
     );
+    
+    // clear the old cache from redis .... 
+    await clearProjectCache(ownerId)
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
@@ -25,7 +30,8 @@ export const updateProjectQuery = async (
         Message: "Project not found",
       });
     }
-
+   
+    
     return res.status(200).json({
       Success: true,
       Message: "Project updated successfully",

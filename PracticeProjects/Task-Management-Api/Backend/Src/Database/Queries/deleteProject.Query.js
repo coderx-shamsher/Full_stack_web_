@@ -1,3 +1,4 @@
+import { clearProjectCache } from "../../utils/clearProjectCache.js";
 import pool from "../Config/mysql.pool.js";
 
 export const deleteProjectQuery = async (projectId,onwerId, res, next) => {
@@ -25,6 +26,10 @@ export const deleteProjectQuery = async (projectId,onwerId, res, next) => {
         Warrning : "Maybe You Have No OwnerShip oF this Project !!"
       });
     }
+
+    // clear cache from redis 
+    await clearProjectCache(onwerId)
+     
     console.log("----------DB Query SuccessFull ----------\n");
     console.log(result);
     console.log("----------DB Query SuccessFull ----------\n");
