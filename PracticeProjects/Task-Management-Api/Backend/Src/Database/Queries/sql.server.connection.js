@@ -4,7 +4,7 @@ async function sqlConnection() {
   try {
     const connection = await pool.getConnection();
     if (connection) {
-      console.log(`Database (Mysql) Connection Up and Running`);
+      console.log(`Database (Mysql) Connection Up and Running \n`);
       connection.release();
     }
   } catch (error) {
