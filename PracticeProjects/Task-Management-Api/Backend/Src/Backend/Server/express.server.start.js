@@ -33,6 +33,8 @@ const server = app.listen(port, host, async () => {
     },
     "Backend Server Started",
   );
+
+  // Redis connection ->  
    await redisClient.connect()
    await redisClient.set("test:key", " Redis connected.... \n")
    const value = await redisClient.get("test:key")
