@@ -1,0 +1,126 @@
+
+/* Topbar */
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  
+    padding: 22px 30px;
+    background: linear-gradient(135deg, #111827, #1e293b);
+    color: #f8fafc;
+  
+    border-bottom: 1px solid #334155;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.12);
+  }
+  
+  /* Page title */
+  .topbar-title h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #f8fafc;
+  }
+  
+  .topbar-title p {
+    margin: 7px 0 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #cbd5e1;
+  }
+  
+  /* Search and profile section */
+  .topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  /* Search input */
+  .topbar-actions input {
+    width: 250px;
+    padding: 11px 15px;
+  
+    background: #f8fafc;
+    color: #0f172a;
+  
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    outline: none;
+  
+    font-size: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  
+  .topbar-actions input::placeholder {
+    color: #64748b;
+  }
+  
+  .topbar-actions input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+  }
+  
+  /* User profile */
+  .user-profile {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+  
+    color: #f1f5f9;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  /* Avatar */
+  .user-avatar {
+    display: grid;
+    place-items: center;
+  
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  
+    border: 1px solid rgba(165, 180, 252, 0.5);
+    border-radius: 12px;
+  
+    background: linear-gradient(135deg, #a5b4fc, #60a5fa);
+    color: #172554;
+  
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 3px 10px rgba(96, 165, 250, 0.18);
+  }
+  
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .topbar {
+      align-items: flex-start;
+      flex-direction: column;
+      padding: 20px;
+    }
+  
+    .topbar-actions {
+      width: 100%;
+      gap: 14px;
+    }
+  
+    .topbar-actions input {
+      width: 100%;
+      min-width: 0;
+    }
+  }
+  
+  @media (max-width: 420px) {
+    .topbar-actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+  
+    .user-profile {
+      align-self: flex-start;
+    }
+  }
+  
