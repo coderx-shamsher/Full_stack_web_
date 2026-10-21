@@ -1,8 +1,10 @@
-import { useState } from "react";
+
 import Sidebar from "./components/layout/Sidebar";
 import DashboardPage from "./pages/DashboardPage";
 import "./App.css";
 import Topbar from "./components/layout/Topbar";
+import { useState } from "react";
+
 
 function App() {
   const [activePage, setActivePage] = useState("Dashboard");
@@ -23,7 +25,7 @@ function App() {
         />
 
         {activePage === "Dashboard" || activePage === "My Files" ? (
-          <DashboardPage  />
+          <DashboardPage />
         ) : (
           <main className="content">
             <h1>{activePage}</h1>
@@ -38,3 +40,7 @@ function App() {
 }
 
 export default App;
+function setNotice(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+

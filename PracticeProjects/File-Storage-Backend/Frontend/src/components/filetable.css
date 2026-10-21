@@ -1,0 +1,36 @@
+/* Preview Button */
+.preview-btn {
+    background-color: #2563EB;
+    color: #FFFFFF;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .preview-btn:hover {
+    background-color: #1D4ED8;
+  }
+  
+  /* Download Button */
+  .download-btn {
+    background-color: #16A34A;
+    color: #FFFFFF;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .download-btn:hover {
+    background-color: #15803D;
+  }
+
+
+.preview_download_section{
+    display: flex;
+    gap: 10px;
+  
+}
