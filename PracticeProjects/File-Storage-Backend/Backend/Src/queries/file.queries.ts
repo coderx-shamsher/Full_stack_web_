@@ -37,7 +37,8 @@ export async function createTable(): Promise<void> {
 
 // -- function jo k ek input object leta hai ..
 export async function createFileQuery(input: CreateFileInput): Promise<number | undefined> {
-    try {
+   let {originalName, storedName, mimeType, sizeBytes, storagePath}  = input
+  try {
         const [result] = await pool.query<ResultSetHeader>(`
          INSERT INTO files (
           original_name,
@@ -47,8 +48,9 @@ export async function createFileQuery(input: CreateFileInput): Promise<number | 
           storage_path
          )
           VALUES (?,?,?,?,?)
-        `, [input.originalName, input.storedName, input.mimeType, input.sizeBytes, input.storagePath])
-
+        `, [originalName, storedName, mimeType, sizeBytes, storagePath])
+        
+        console.log("\n File is Inserted into DB... !! ");
         // return insertid  
         return result.insertId
 
