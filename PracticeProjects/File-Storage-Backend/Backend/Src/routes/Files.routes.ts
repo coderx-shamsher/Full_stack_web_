@@ -1,9 +1,18 @@
 import { Router } from "express";
 import type { NextFunction, Request, Response } from "express";
-import upload from "../middlewares/upload.middleware.js";
+import upload, { uploadDir } from "../middlewares/upload.middleware.js";
 import path from "node:path";
-import { createFileQuery, getAllFilesQuery } from "../queries/file.queries.js";
+import { createFileQuery, deleteFileByidQuery, getAllFilesQuery, getFileByIdQuery } from "../queries/file.queries.js";
 import { unlink } from "node:fs/promises";
+import { constants } from "node:fs";
+import { access } from "node:fs/promises";
+import { error } from "node:console";
+import { getAllFilesController } from "../controllers/Get-all-files.controller.js";
+import { uploadFilesController } from "../controllers/Upload-files.controller.js";
+import { getFilesByidController } from "../controllers/Get-filesbyid.controller.js";
+import { downloadFileController } from "../controllers/downloadFile.controller.js";
+import { deleteFileController } from "../controllers/deleteFile.controller.js";
+
 const fileRouter = Router()
 
 // create handle route 
@@ -32,83 +41,14 @@ fileRouter.post('/files-test', upload.single("file"), (req: Request, res: Respon
     })
 })
 
-fileRouter.post('/files', upload.single("file"), async (req: Request, res: Response, next: NextFunction) => {
+fileRouter.post('/files', upload.single("file"),uploadFilesController)
 
-    console.log("\n Uploaded file:", req.file, "\n");
-    console.log("\n Current working directory:", process.cwd());
-    if (!req.file) {
-        return res.status(400).json({
-            Success: false,
-            Message: "Please upload a file..."
-        })
-    }
+fileRouter.get('/get-allfiles', getAllFilesController)
 
-    const file = req.file
+fileRouter.get('/get-file/:fileid',getFilesByidController )
 
-    const metadata = {
-        originalName: file.originalname,
-        storedName: req.file.filename,
-        mimeType: req.file.mimetype,
-        sizeBytes: req.file.size,
-        storagePath: path.posix.join("uploads", file.filename)
-    }
+fileRouter.get('/get-file/:fileid/download',downloadFileController )
 
-    try {
+fileRouter.delete('/delete-file/:fileid', deleteFileController )
 
-        const fileId = await createFileQuery(metadata)
-
-        // const rows = await getAllFilesQuery()
-        // console.log(rows);
-
-        console.log("\n Inserted File Id -->> : ", fileId, '\n');
-
-        if (typeof fileId !== "undefined") {
-            return res.status(201).json({
-                Success: true,
-                Message: "file uploaded Successfully",
-                data: {
-                    fileId,
-                    ...metadata
-                }
-            })
-        }
-
-        if (typeof fileId === "undefined") {
-            return res.status(500).json({
-                Success: false,
-                Message: "file upload Failed...",
-            })
-        }
-    } catch (error) {
-        try {
-            await unlink(file.path)
-        } catch (cleanupError) {
-            console.error("Failed to clean up uploaded file : ", cleanupError);
-        }
-        return next(error) // error go into upload error middleware 
-    }
-})
-
-
-fileRouter.get('/get-allfiles', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-
-        const files = await getAllFilesQuery()
-
-        if (files.length > 0) {
-            console.log("\n All Files Fetched..... \n");
-            console.log(files);
-            console.log();
-
-            return res.status(200).json({
-                success: true,
-                count: files.length,
-                data: files,
-            });
-
-        }
-    } catch (error) {
-       return next(error);
-    }
-})
 export default fileRouter
