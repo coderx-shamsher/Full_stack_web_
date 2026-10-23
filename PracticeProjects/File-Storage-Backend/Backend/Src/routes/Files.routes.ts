@@ -12,6 +12,7 @@ import { uploadFilesController } from "../controllers/Upload-files.controller.js
 import { getFilesByidController } from "../controllers/Get-filesbyid.controller.js";
 import { downloadFileController } from "../controllers/downloadFile.controller.js";
 import { deleteFileController } from "../controllers/deleteFile.controller.js";
+import { validatePagination } from "../middlewares/validatePagination.js";
 
 const fileRouter = Router()
 
@@ -43,7 +44,7 @@ fileRouter.post('/files-test', upload.single("file"), (req: Request, res: Respon
 
 fileRouter.post('/files', upload.single("file"),uploadFilesController)
 
-fileRouter.get('/get-allfiles', getAllFilesController)
+fileRouter.get('/get-allfiles', validatePagination ,getAllFilesController)
 
 fileRouter.get('/get-file/:fileid',getFilesByidController )
 
