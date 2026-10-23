@@ -1,5 +1,5 @@
 import type { CreateFileInput, FileTypes } from "../types/file.types";
-import type { ResultSetHeader, RowDataPacket } from "mysql2";
+import type { OkPacketParams, ResultSetHeader, RowDataPacket } from "mysql2";
 import pool from "../config/mysql.pool.js";
 
 interface Filerow extends RowDataPacket, FileTypes { }
@@ -83,7 +83,7 @@ export async function getFileByIdQuery(fileId: number): Promise<FileTypes | null
     }
 }
 
-export async function getAllFilesQuery(): Promise<FileTypes[]> {
+export async function getAllFilesQuery(limit : number, offset : number): Promise<FileTypes[]> {
   const [rows] = await pool.execute<Filerow[]>(
     `
       SELECT
@@ -96,8 +96,19 @@ export async function getAllFilesQuery(): Promise<FileTypes[]> {
         created_at
       FROM files
       ORDER BY created_at DESC, file_id DESC
-    `
+      limit ? offset ? 
+    `,[limit,offset]
   );
 
   return rows;
+}
+
+export async function deleteFileByidQuery(fileId : number) :Promise <number> {
+      // Delete metadata first, then the physical file.
+      const [result] = await pool.query<ResultSetHeader>(
+        "DELETE FROM files WHERE file_id = ?",
+        [fileId]
+      );
+     
+      return result.affectedRows
 }
